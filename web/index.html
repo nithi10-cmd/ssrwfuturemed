@@ -1,0 +1,1910 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RehabGlove Clinic</title>
+<meta name="theme-color" content="#0B66B2">
+<meta name="description" content="ระบบฟื้นฟูมือด้วยถุงมือกายภาพบำบัด">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#0B66B2; --primary-600:#09548F; --primary-50:#EAF3FB; --primary-100:#D3E6F6;
+    --success:#1E8E5A; --success-50:#E7F5EE;
+    --warning:#B7791F; --warning-50:#FDF5E6;
+    --danger:#C8372D; --danger-600:#A82C23; --danger-50:#FCECEA;
+    --bg:#F4F7FA; --surface:#FFFFFF; --line:#DCE3EA; --line-2:#EDF1F5;
+    --text:#14212E; --text-2:#4A5A6A; --muted:#738396;
+    --series-1:#0B66B2; --series-2:#D9622B;
+    --radius:12px; --shadow:0 1px 2px rgba(16,40,64,.06), 0 1px 1px rgba(16,40,64,.04);
+    --font:'Sarabun',-apple-system,'Segoe UI','Leelawadee UI','Tahoma',sans-serif;
+    --mono:ui-monospace,'SF Mono',Consolas,monospace;
+  }
+  *{box-sizing:border-box;}
+  [hidden]{display:none !important;}
+  html,body{margin:0;}
+  body{font-family:var(--font);font-size:15px;line-height:1.5;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;}
+  .ico{width:18px;height:18px;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .ico.lg{width:22px;height:22px;}
+  .num{font-variant-numeric:tabular-nums;}
+
+  /* ---------- โครงหน้า ---------- */
+  .topbar{position:sticky;top:0;z-index:20;height:56px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 16px;}
+  .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;color:var(--text);white-space:nowrap;}
+  .brand-mark{width:30px;height:30px;border-radius:8px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;}
+  .brand small{display:block;font-weight:500;font-size:11.5px;color:var(--muted);line-height:1.1;}
+  .chips{margin-left:auto;display:flex;gap:8px;align-items:center;}
+  .chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--text-2);background:var(--line-2);border-radius:999px;padding:4px 10px;white-space:nowrap;}
+  .chip .dot{width:8px;height:8px;border-radius:50%;background:#A8B4C0;}
+  .chip.ok{background:var(--success-50);color:var(--success);} .chip.ok .dot{background:var(--success);}
+  .chip.warn{background:var(--warning-50);color:var(--warning);} .chip.warn .dot{background:var(--warning);}
+  .chip.bad{background:var(--danger-50);color:var(--danger);} .chip.bad .dot{background:var(--danger);}
+
+  .layout{display:flex;min-height:calc(100vh - 56px);}
+  .sidenav{width:220px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--line);padding:16px 10px;position:sticky;top:56px;height:calc(100vh - 56px);}
+  .nav-btn{display:flex;align-items:center;gap:10px;width:100%;border:none;background:none;font:inherit;font-size:14.5px;font-weight:600;color:var(--text-2);padding:10px 12px;border-radius:9px;cursor:pointer;text-align:left;}
+  .nav-btn:hover{background:var(--line-2);}
+  .nav-btn.active{background:var(--primary-50);color:var(--primary);}
+  .nav-foot{position:absolute;bottom:16px;left:10px;right:10px;font-size:11.5px;color:var(--muted);line-height:1.5;padding:0 6px;}
+  main{flex:1;min-width:0;padding:20px 24px 120px;max-width:1180px;}
+  .bottomnav{display:none;}
+
+  .page{display:none;}
+  .page.active{display:block;}
+  .page-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin:4px 0 16px;flex-wrap:wrap;}
+  .page-head h1{font-size:22px;margin:0;line-height:1.25;}
+  .page-head p{margin:2px 0 0;color:var(--muted);font-size:13.5px;}
+
+  .grid{display:grid;gap:16px;}
+  .grid-2{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);}
+  .grid-2-even{grid-template-columns:1fr 1fr;}
+
+  /* ---------- การ์ด ---------- */
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);}
+  .panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line-2);}
+  .panel-head h2{font-size:15px;margin:0;display:flex;align-items:center;gap:8px;}
+  .panel-head h2 .ico{color:var(--primary);}
+  .panel-body{padding:16px;}
+  .panel + .panel{margin-top:16px;}
+
+  /* ---------- ปุ่ม ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font:inherit;font-weight:600;font-size:14.5px;border-radius:9px;padding:10px 16px;border:1px solid transparent;cursor:pointer;min-height:42px;white-space:nowrap;}
+  .btn:disabled{opacity:.45;cursor:not-allowed;}
+  .btn:focus-visible,.nav-btn:focus-visible,.seg button:focus-visible{outline:3px solid var(--primary-100);outline-offset:1px;}
+  .btn-primary{background:var(--primary);color:#fff;}
+  .btn-primary:not(:disabled):hover{background:var(--primary-600);}
+  .btn-secondary{background:var(--surface);border-color:var(--line);color:var(--text);}
+  .btn-secondary:not(:disabled):hover{background:var(--line-2);}
+  .btn-danger{background:var(--danger);color:#fff;}
+  .btn-danger:not(:disabled):hover{background:var(--danger-600);}
+  .btn-ghost{background:none;color:var(--primary);padding:6px 10px;min-height:34px;}
+  .btn-ghost:hover{background:var(--primary-50);}
+  .btn-ghost.danger{color:var(--danger);} .btn-ghost.danger:hover{background:var(--danger-50);}
+  .btn-sm{font-size:13.5px;padding:6px 12px;min-height:34px;}
+  .btn-lg{font-size:16px;min-height:52px;padding:12px 20px;}
+  .icon-btn{width:34px;height:34px;padding:0;min-height:34px;}
+
+  /* ---------- แถบผู้ป่วย (patient banner) ---------- */
+  .banner{display:flex;align-items:center;gap:14px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--primary);border-radius:var(--radius);box-shadow:var(--shadow);margin-bottom:20px;}
+  .banner.none{border-left-color:var(--warning);}
+  .avatar{width:44px;height:44px;border-radius:50%;background:var(--primary-50);color:var(--primary);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex-shrink:0;}
+  .banner.none .avatar{background:var(--warning-50);color:var(--warning);}
+  .banner .who{flex:1;min-width:0;}
+  .banner .name{font-size:17px;font-weight:700;line-height:1.3;}
+  .kv{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:13px;color:var(--text-2);margin-top:2px;}
+  .kv span b{color:var(--muted);font-weight:500;margin-right:4px;}
+  .flag{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--danger);background:var(--danger-50);border-radius:6px;padding:2px 8px;margin-top:6px;}
+  .flag .ico{width:14px;height:14px;}
+
+  /* ---------- ขั้นตอน ---------- */
+  .steps{display:flex;flex-direction:column;gap:10px;}
+  .step{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:10px;}
+  .step .num-badge{width:28px;height:28px;border-radius:50%;background:var(--line-2);color:var(--text-2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13.5px;flex-shrink:0;}
+  .step.done{border-color:#BFE3CF;background:var(--success-50);}
+  .step.done .num-badge{background:var(--success);color:#fff;}
+  .step .t{flex:1;min-width:0;}
+  .step .t b{display:block;font-size:14px;}
+  .step .t span{font-size:12.5px;color:var(--text-2);}
+
+  /* ---------- หน้าจอฝึก ---------- */
+  .monitor{display:flex;flex-direction:column;align-items:center;padding:8px 0 4px;}
+  .ring-wrap{position:relative;width:200px;height:200px;}
+  .ring-wrap svg{transform:rotate(-90deg);}
+  #ring{transition:stroke-dashoffset .15s linear, stroke .3s;}
+  .ring-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .ring-phase{font-size:26px;font-weight:700;color:var(--text);}
+  .ring-pct{font-family:var(--mono);font-size:14px;color:var(--text-2);}
+  .ring-sub{font-size:12.5px;color:var(--muted);margin-top:2px;text-align:center;max-width:150px;}
+  .round-line{display:flex;gap:24px;margin-top:10px;font-size:13px;color:var(--muted);}
+  .round-line b{display:block;font-size:22px;color:var(--text);text-align:center;font-variant-numeric:tabular-nums;}
+  .controls{display:grid;grid-template-columns:2fr 1fr 1fr;gap:10px;margin-top:16px;}
+
+  .alert{display:none;align-items:flex-start;gap:10px;border-radius:10px;padding:10px 12px;font-size:13.5px;line-height:1.5;margin-top:12px;}
+  .alert.show{display:flex;}
+  .alert-danger{background:var(--danger-50);color:var(--danger-600);border:1px solid #F2C3BE;}
+  .alert-warn{background:var(--warning-50);color:#7A5214;border:1px solid #F0DDB5;display:flex;}
+  .alert-info{background:var(--primary-50);color:var(--primary-600);border:1px solid var(--primary-100);display:flex;}
+
+  /* ---------- ฟอร์ม/ตัวเลือก ---------- */
+  .seg{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;background:var(--line-2);padding:4px;border-radius:10px;}
+  .seg button{font:inherit;font-size:13.5px;font-weight:600;border:none;background:none;border-radius:7px;padding:8px 4px;cursor:pointer;color:var(--text-2);}
+  .seg button.active{background:var(--surface);color:var(--primary);box-shadow:var(--shadow);}
+  .preset-desc{font-size:12.5px;color:var(--muted);margin:8px 0 14px;}
+  .field{margin-bottom:14px;}
+  .field-top{display:flex;justify-content:space-between;font-size:13.5px;color:var(--text-2);margin-bottom:4px;}
+  .field-top output{font-weight:700;color:var(--text);font-variant-numeric:tabular-nums;}
+  input[type=range]{width:100%;accent-color:var(--primary);height:24px;}
+  .hint{font-size:12.5px;color:var(--muted);line-height:1.55;}
+
+  .form-sec{font-size:12.5px;font-weight:700;color:var(--primary);letter-spacing:.3px;margin:6px 0 0;padding-bottom:6px;border-bottom:1px solid var(--line-2);grid-column:1/-1;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .form-grid .full{grid-column:1/-1;}
+  .f label{display:block;font-size:13px;font-weight:600;color:var(--text-2);margin-bottom:4px;}
+  .f input,.f select,.f textarea,.input{
+    width:100%;font:inherit;font-size:14.5px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--text);min-height:42px;
+  }
+  .f textarea{min-height:70px;resize:vertical;}
+  .f input:focus,.f select:focus,.f textarea:focus,.input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-100);}
+  .f input[aria-invalid=true]{border-color:var(--danger);}
+  .f .err{color:var(--danger);font-size:12.5px;margin-top:3px;}
+  .req::after{content:' *';color:var(--danger);}
+  .search-wrap{position:relative;}
+  .search-wrap .ico{position:absolute;left:11px;top:12px;color:var(--muted);}
+  .search-wrap .input{padding-left:36px;}
+
+  /* ---------- KPI ---------- */
+  .kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px;}
+  .kpi{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;box-shadow:var(--shadow);}
+  .kpi span{display:block;font-size:12.5px;color:var(--muted);}
+  .kpi b{display:block;font-size:22px;font-weight:700;line-height:1.3;font-variant-numeric:tabular-nums;}
+  .kpi b span,.kpi small{display:inline;font-size:inherit;color:inherit;}
+  .kpi small{font-size:12px;color:var(--muted);font-weight:500;}
+  .mini-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+  .mini-kpis div{background:var(--line-2);border-radius:9px;padding:8px;text-align:center;}
+  .mini-kpis b{display:block;font-size:19px;font-variant-numeric:tabular-nums;}
+  .mini-kpis span{font-size:12px;color:var(--muted);}
+  .bars{display:flex;align-items:flex-end;gap:2px;height:72px;border-bottom:1px solid var(--line);}
+  .bars div{flex:1;background:var(--primary);border-radius:4px 4px 0 0;min-height:2px;}
+  .bars div.stall{background:var(--series-2);}
+
+  /* ---------- ตาราง ---------- */
+  .table-wrap{overflow-x:auto;}
+  table{width:100%;border-collapse:collapse;font-size:14px;}
+  th{font-size:12.5px;font-weight:600;color:var(--muted);text-align:left;padding:8px 10px;background:#F8FAFC;border-bottom:1px solid var(--line);white-space:nowrap;}
+  td{padding:10px;border-bottom:1px solid var(--line-2);vertical-align:middle;}
+  td.n{font-variant-numeric:tabular-nums;white-space:nowrap;}
+  td.act{text-align:right;white-space:nowrap;}
+  tr.click{cursor:pointer;}
+  tr.click:hover td{background:#F8FAFC;}
+  tr.sel td{background:var(--primary-50);}
+  tr.sel td:first-child{box-shadow:inset 3px 0 0 var(--primary);}
+  .pname{font-weight:600;}
+  .psub{font-size:12.5px;color:var(--muted);}
+  .badge{display:inline-flex;align-items:center;font-size:11.5px;font-weight:600;border-radius:6px;padding:1px 7px;background:var(--line-2);color:var(--text-2);margin-left:6px;vertical-align:1px;}
+  .badge.primary{background:var(--primary-50);color:var(--primary);}
+  .badge.ok{background:var(--success-50);color:var(--success);}
+  .badge.warn{background:var(--warning-50);color:var(--warning);}
+  .badge.bad{background:var(--danger-50);color:var(--danger);}
+  .empty{color:var(--muted);font-size:14px;text-align:center;padding:22px 10px;}
+
+  /* ---------- บัตรประชาชน ---------- */
+  .reader{display:flex;align-items:center;gap:14px;}
+  .reader-ico{width:48px;height:48px;border-radius:12px;background:var(--primary-50);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .reader .t{flex:1;min-width:0;}
+  .reader .t b{display:block;font-size:15px;}
+  .reader .t span{font-size:13px;color:var(--text-2);}
+  .progress{height:8px;background:var(--line-2);border-radius:99px;overflow:hidden;margin-top:12px;}
+  .progress > div{height:100%;width:0;background:var(--primary);transition:width .2s;}
+  .photo-tips{margin:10px 0 0;padding-left:18px;}
+  .ocr-review{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:12px;align-items:start;margin-bottom:14px;}
+  .ocr-review img{width:100%;max-height:260px;object-fit:contain;background:#1b2632;border-radius:8px;border:1px solid var(--line);}
+  .ocr-review .alert{margin:0;}
+  @media (max-width:560px){ .ocr-review{grid-template-columns:1fr;} }
+  .switch{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--text-2);margin-top:12px;cursor:pointer;}
+  .switch input{width:18px;height:18px;accent-color:var(--primary);}
+
+  /* ---------- timeline ---------- */
+  .timeline{display:flex;flex-direction:column;}
+  .tl{display:grid;grid-template-columns:88px 1fr;gap:12px;padding:12px 0;border-bottom:1px solid var(--line-2);}
+  .tl:last-child{border-bottom:none;}
+  .tl .d{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums;padding-top:2px;}
+  .tl .title{font-weight:600;font-size:14.5px;}
+  .tl .body{font-size:13.5px;color:var(--text-2);white-space:pre-wrap;margin-top:2px;}
+  .tl .foot{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-top:4px;}
+  .dx{background:var(--warning-50);border:1px solid #F0DDB5;border-radius:10px;padding:10px 12px;font-size:13.5px;margin-bottom:6px;}
+  .dx b{color:#7A5214;}
+
+  /* ---------- กราฟ ---------- */
+  .chart{position:relative;}
+  .chart svg{display:block;width:100%;height:auto;overflow:visible;}
+  .chart .grid{stroke:var(--line-2);stroke-width:1;}
+  .chart .axis-label{fill:var(--muted);font-size:11px;font-family:var(--font);}
+  .chart .direct-label{font-size:11.5px;font-weight:700;fill:var(--text);font-family:var(--font);}
+  .chart .hit{fill:transparent;cursor:pointer;}
+  .tooltip{position:absolute;pointer-events:none;background:var(--text);color:#fff;font-size:12.5px;padding:6px 10px;border-radius:7px;white-space:nowrap;transform:translate(-50%,-120%);display:none;z-index:2;line-height:1.45;}
+  .legend{display:flex;gap:16px;font-size:13px;color:var(--text-2);margin-bottom:8px;flex-wrap:wrap;}
+  .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;}
+
+  /* ---------- หยุดฉุกเฉิน ---------- */
+  .estop-bar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:none;padding:10px 16px calc(10px + env(safe-area-inset-bottom));background:rgba(255,255,255,.96);border-top:1px solid var(--line);backdrop-filter:blur(6px);}
+  .estop-bar.show{display:block;}
+  .estop-inner{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:14px;}
+  .estop-inner .hint{flex:1;}
+  .btn-estop{background:var(--danger);color:#fff;font-size:17px;font-weight:700;min-height:54px;padding:0 28px;border-radius:10px;letter-spacing:.3px;box-shadow:0 2px 8px rgba(200,55,45,.3);}
+  .btn-estop:hover{background:var(--danger-600);}
+  kbd{font-family:var(--mono);font-size:11.5px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 5px;background:#fff;}
+
+  /* ---------- dialog / toast ---------- */
+  dialog{border:none;border-radius:14px;padding:0;width:min(640px,calc(100vw - 24px));max-height:calc(100vh - 32px);box-shadow:0 20px 50px rgba(16,40,64,.25);}
+  dialog.sm{width:min(420px,calc(100vw - 24px));}
+  dialog::backdrop{background:rgba(20,33,46,.45);}
+  .dlg-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line-2);position:sticky;top:0;background:#fff;z-index:1;}
+  .dlg-head h3{margin:0;font-size:17px;}
+  .dlg-body{padding:18px 20px;}
+  .dlg-foot{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--line-2);position:sticky;bottom:0;background:#fff;}
+  .confirm-ico{width:44px;height:44px;border-radius:50%;background:var(--danger-50);color:var(--danger);display:flex;align-items:center;justify-content:center;margin-bottom:10px;}
+  .toasts{position:fixed;top:66px;right:16px;z-index:50;display:flex;flex-direction:column;gap:8px;}
+  .toast{display:flex;align-items:center;gap:10px;background:var(--text);color:#fff;font-size:14px;border-radius:10px;padding:10px 14px;box-shadow:0 8px 24px rgba(16,40,64,.25);max-width:360px;animation:tin .2s ease-out;}
+  .toast.ok .ico{color:#7BD9A6;} .toast.err{background:var(--danger-600);}
+  @keyframes tin{from{opacity:0;transform:translateY(-6px);}to{opacity:1;transform:none;}}
+
+  details.logbox summary{cursor:pointer;font-size:13.5px;font-weight:600;color:var(--text-2);padding:12px 16px;}
+  .log{background:#14212E;color:#C9D7E4;font-family:var(--mono);font-size:12px;border-radius:0 0 var(--radius) var(--radius);padding:10px 14px;height:160px;overflow-y:auto;}
+  .log div{padding:2px 0;border-bottom:1px solid #ffffff10;}
+  details > summary::-webkit-details-marker{display:none;}
+
+  /* ---------- จอเล็ก ---------- */
+  @media (max-width:1080px){ .kpis{grid-template-columns:repeat(3,1fr);} }
+  @media (max-width:900px){
+    .sidenav{display:none;}
+    main{padding:16px 16px 150px;}
+    .grid-2,.grid-2-even{grid-template-columns:1fr;}
+    .bottomnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom);}
+    .bottomnav .nav-btn{flex-direction:column;gap:2px;font-size:12px;padding:8px 4px;border-radius:0;align-items:center;}
+    .bottomnav .nav-btn.active{background:none;}
+    .estop-bar{bottom:58px;}
+    .brand small{display:none;}
+    .chip .lbl{display:none;}
+  }
+  @media (max-width:560px){
+    .form-grid{grid-template-columns:1fr;}
+    .kpis{grid-template-columns:repeat(2,1fr);}
+    .controls{grid-template-columns:1fr 1fr;}
+    .controls #startBtn{grid-column:1/-1;}
+    .tl{grid-template-columns:1fr;gap:2px;}
+    .estop-inner .hint{display:none;}
+    .btn-estop{width:100%;}
+    .hide-sm{display:none;}
+    .page-head h1{font-size:20px;}
+    .banner{flex-wrap:wrap;}
+    .banner #bnChange{width:100%;}
+    .brand{font-size:15px;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ไอคอน (เส้น) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M18 11V6a2 2 0 0 0-4 0v5M14 10V4a2 2 0 0 0-4 0v6M10 10.5V6a2 2 0 0 0-4 0v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></symbol>
+  <symbol id="i-bt" viewBox="0 0 24 24"><path d="m7 7 10 10-5 5V2l5 5L7 17"/></symbol>
+  <symbol id="i-card" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M5 16c.5-1.2 1.6-2 3-2s2.5.8 3 2M14 10h5M14 14h3"/></symbol>
+  <symbol id="i-batt" viewBox="0 0 24 24"><rect x="2" y="7" width="17" height="10" rx="2"/><path d="M22 11v2"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4v16l13-8z"/></symbol>
+  <symbol id="i-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+  <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6M10 11v6M14 11v6"/></symbol>
+  <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 15V3M7 8l5-5 5 5M5 21h14"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0zM12 9v4M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></symbol>
+  <symbol id="i-tool" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+  <symbol id="i-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M16 3l4 4-4 4M20 7H4M8 21l-4-4 4-4M4 17h16"/></symbol>
+</svg>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-mark"><svg class="ico"><use href="#i-cross"/></svg></div>
+    <div>RehabGlove Clinic<small>ระบบฟื้นฟูมือด้วยถุงมือกายภาพบำบัด</small></div>
+  </div>
+  <div class="chips">
+    <span class="chip" id="chipGlove" title="สถานะถุงมือ"><span class="dot"></span><svg class="ico" style="width:14px;height:14px"><use href="#i-bt"/></svg><span class="lbl" id="chipGloveText">ถุงมือ: ไม่เชื่อมต่อ</span></span>
+    <span class="chip" id="chipBatt" style="display:none" title="แบตเตอรี่ถุงมือ"><svg class="ico" style="width:14px;height:14px"><use href="#i-batt"/></svg><span id="battText"></span></span>
+    <button class="btn btn-primary btn-sm" id="installBtn" hidden><svg class="ico"><use href="#i-down"/></svg>ติดตั้งแอป</button>
+    <span class="chip" id="chipCard" title="เครื่องอ่านบัตรประชาชน"><span class="dot"></span><svg class="ico" style="width:14px;height:14px"><use href="#i-card"/></svg><span class="lbl" id="chipCardText">เครื่องอ่านบัตร</span></span>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidenav" aria-label="เมนูหลัก">
+    <button class="nav-btn active" data-tab="train"><svg class="ico lg"><use href="#i-hand"/></svg>ฝึกกายภาพ</button>
+    <button class="nav-btn" data-tab="patients"><svg class="ico lg"><use href="#i-users"/></svg>ทะเบียนผู้ป่วย</button>
+    <button class="nav-btn" data-tab="stats"><svg class="ico lg"><use href="#i-chart"/></svg>ประวัติและผลการรักษา</button>
+    <div class="nav-foot">ข้อมูลเก็บในเครื่องนี้เท่านั้น<br>สำรองข้อมูลเป็นประจำที่หน้า "ทะเบียนผู้ป่วย"</div>
+  </nav>
+
+  <main>
+    <!-- แถบผู้ป่วย -->
+    <section class="banner none" id="banner" aria-label="ผู้ป่วยที่เลือก">
+      <div class="avatar" id="bnAvatar">?</div>
+      <div class="who">
+        <div class="name" id="bnName">ยังไม่ได้เลือกผู้ป่วย</div>
+        <div class="kv" id="bnKv"></div>
+        <div id="bnFlag"></div>
+      </div>
+      <button class="btn btn-secondary btn-sm" id="bnChange"><svg class="ico"><use href="#i-swap"/></svg><span id="bnChangeText">เลือกผู้ป่วย</span></button>
+    </section>
+
+    <!-- =================== หน้า: ฝึกกายภาพ =================== -->
+    <section class="page active" id="page-train">
+      <div class="page-head">
+        <div><h1>ฝึกกายภาพบำบัด</h1><p>ทำตามขั้นตอนด้านล่าง แล้วกดเริ่มฝึก</p></div>
+      </div>
+
+      <div class="alert alert-warn" id="browserWarn" style="margin:0 0 16px;">
+        <svg class="ico"><use href="#i-alert"/></svg>
+        <div>เบราว์เซอร์นี้ไม่รองรับการเชื่อมต่อถุงมือ กรุณาใช้ <b>Chrome</b> หรือ <b>Edge</b> บนคอมพิวเตอร์หรือ Android และเปิดหน้านี้ผ่าน HTTPS หรือ localhost</div>
+      </div>
+
+      <div class="grid grid-2">
+        <div>
+          <div class="panel">
+            <div class="panel-head"><h2><svg class="ico"><use href="#i-check"/></svg>เตรียมความพร้อม</h2></div>
+            <div class="panel-body steps">
+              <div class="step" id="step1">
+                <div class="num-badge">1</div>
+                <div class="t"><b>ระบุผู้ป่วย</b><span id="step1Text">เลือกจากทะเบียน หรือเสียบบัตรประชาชน</span></div>
+                <button class="btn btn-secondary btn-sm" id="step1Btn">เลือก</button>
+              </div>
+              <div class="step" id="step2">
+                <div class="num-badge">2</div>
+                <div class="t"><b>เชื่อมต่อถุงมือ</b><span id="statusSub">กดเชื่อมต่อแล้วเลือก "SmartGlove"</span></div>
+                <button class="btn btn-primary btn-sm" id="connectBtn"><svg class="ico"><use href="#i-bt"/></svg><span id="connectText">เชื่อมต่อ</span></button>
+              </div>
+              <div class="step" id="step3">
+                <div class="num-badge">3</div>
+                <div class="t"><b>สวมถุงมือและเลือกระดับการฝึก</b><span>ตรวจสอบว่าสายไม่ตึงขณะแบมือ</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2><svg class="ico"><use href="#i-gauge"/></svg>ติดตามการฝึก</h2>
+              <span class="badge" id="phaseBadge">พร้อม</span>
+            </div>
+            <div class="panel-body">
+              <div class="monitor">
+                <div class="ring-wrap">
+                  <svg width="200" height="200" viewBox="0 0 200 200">
+                    <circle cx="100" cy="100" r="86" stroke="#EDF1F5" stroke-width="14" fill="none"/>
+                    <circle id="ring" cx="100" cy="100" r="86" stroke="#0B66B2" stroke-width="14" fill="none" stroke-linecap="round"/>
+                  </svg>
+                  <div class="ring-center">
+                    <div class="ring-phase" id="ringPhaseText">พร้อม</div>
+                    <div class="ring-pct" id="ringPct">กำ 0%</div>
+                    <div class="ring-sub" id="ringSub">–</div>
+                  </div>
+                </div>
+                <div class="round-line">
+                  <div><b id="roundNow">0</b>รอบที่ทำแล้ว</div>
+                  <div><b id="roundTarget">12</b>รอบเป้าหมาย</div>
+                </div>
+              </div>
+
+              <div class="alert alert-danger" id="alertBox" role="alert"><svg class="ico"><use href="#i-alert"/></svg><div id="alertText"></div></div>
+
+              <div class="controls">
+                <button class="btn btn-primary btn-lg" id="startBtn" disabled><svg class="ico"><use href="#i-play"/></svg>เริ่มฝึก</button>
+                <button class="btn btn-secondary btn-lg" id="pauseBtn" disabled><svg class="ico"><use href="#i-pause"/></svg><span id="pauseText">พัก</span></button>
+                <button class="btn btn-secondary btn-lg" id="stopBtn" disabled><svg class="ico"><use href="#i-stop"/></svg>หยุด</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="panel-head"><h2><svg class="ico"><use href="#i-tool"/></svg>ระดับการฝึก</h2></div>
+            <div class="panel-body">
+              <div class="seg" id="presetSeg" role="radiogroup" aria-label="ระดับการฝึก">
+                <button role="radio" data-preset="easy">เริ่มต้น</button>
+                <button role="radio" data-preset="mid">ปานกลาง</button>
+                <button role="radio" data-preset="hard">เข้มข้น</button>
+                <button role="radio" data-preset="custom">กำหนดเอง</button>
+              </div>
+              <div class="preset-desc" id="presetDesc"></div>
+              <div class="field">
+                <div class="field-top"><label for="tgtSlider">จำนวนรอบ</label><output id="tgtVal">12 รอบ</output></div>
+                <input type="range" id="tgtSlider" min="1" max="30" value="12">
+              </div>
+              <div class="field">
+                <div class="field-top"><label for="spdSlider">ความเร็วมอเตอร์</label><output id="spdVal">50%</output></div>
+                <input type="range" id="spdSlider" min="0" max="100" value="50">
+              </div>
+              <div class="field" style="margin-bottom:6px;">
+                <div class="field-top"><label for="holdSlider">เวลากำค้าง</label><output id="holdVal">2.0 วินาที</output></div>
+                <input type="range" id="holdSlider" min="0" max="8000" step="250" value="2000">
+              </div>
+              <div class="hint">ปรับได้ระหว่างฝึก มีผลตั้งแต่จังหวะถัดไป · ระยะกำมือกำหนดจากการคาลิเบรต ไม่ขึ้นกับความเร็ว</div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2><svg class="ico"><use href="#i-chart"/></svg>ผลการฝึกครั้งนี้</h2></div>
+            <div class="panel-body">
+              <div class="mini-kpis">
+                <div><b id="statRounds">0</b><span>รอบที่ทำได้</span></div>
+                <div><b id="statPeak">–</b><span>ระยะกำเฉลี่ย</span></div>
+                <div><b id="statStall">0</b><span>นิ้วเกร็งต้าน</span></div>
+              </div>
+              <div class="bars" id="bars" aria-label="ระยะกำในแต่ละรอบ"></div>
+              <div class="legend" style="margin:8px 0 0;font-size:12.5px;">
+                <span><i style="background:var(--primary)"></i>ระยะกำแต่ละรอบ</span>
+                <span><i style="background:var(--series-2)"></i>รอบที่มีแรงต้านจากนิ้ว</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <details>
+              <summary class="panel-head" style="cursor:pointer;list-style:none;border-bottom:none;"><h2><svg class="ico"><use href="#i-tool"/></svg>คาลิเบรตระยะกำมือ</h2><span class="badge">ROM&nbsp;<span id="romVal">–</span>°</span></summary>
+              <div class="panel-body" style="border-top:1px solid var(--line-2);">
+                <ol class="hint" style="margin:0 0 12px;padding-left:18px;">
+                  <li>ให้ผู้ป่วยแบมือสุด แล้วกด <b>ตั้งเป็นแบมือ</b></li>
+                  <li>กด <b>กำเพิ่ม</b> ทีละครั้ง จนกำได้ในระดับที่ผู้ป่วยไม่เจ็บ</li>
+                  <li>กด <b>ตั้งเป็นกำสุด</b> (ต้องทำใหม่ทุกครั้งที่เปิดเครื่อง)</li>
+                </ol>
+                <div class="grid grid-2-even" style="gap:8px;">
+                  <button class="btn btn-secondary cal" id="jogMinus" disabled>คลาย</button>
+                  <button class="btn btn-secondary cal" id="jogPlus" disabled>กำเพิ่ม</button>
+                  <button class="btn btn-secondary cal" id="zeroBtn" disabled>ตั้งเป็นแบมือ</button>
+                  <button class="btn btn-secondary cal" id="setMaxBtn" disabled>ตั้งเป็นกำสุด</button>
+                </div>
+              </div>
+            </details>
+          </div>
+
+          <div class="panel">
+            <details class="logbox">
+              <summary>บันทึกการสื่อสารกับอุปกรณ์ (สำหรับช่างเทคนิค)</summary>
+              <div class="log" id="logHolder"></div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== หน้า: ทะเบียนผู้ป่วย =================== -->
+    <section class="page" id="page-patients">
+      <div class="page-head">
+        <div><h1>ทะเบียนผู้ป่วย</h1><p>ทั้งหมด <span id="pCount" class="num">0</span> ราย · คลิกที่แถวเพื่อเลือกผู้ป่วยเข้ารับการฝึก</p></div>
+        <button class="btn btn-primary" id="addPatientBtn"><svg class="ico"><use href="#i-plus"/></svg>ลงทะเบียนผู้ป่วยใหม่</button>
+      </div>
+
+      <div class="alert alert-info" id="mobileCardNote" style="display:none;margin:0 0 16px;">
+        <svg class="ico"><use href="#i-card"/></svg>
+        <div>บนมือถือ/แท็บเล็ตใช้ <b>ถ่ายรูปบัตรประชาชน</b> แทนเครื่องอ่านบัตร ระบบจะอ่านข้อมูลจากรูปให้ตรวจสอบก่อนบันทึก
+        หากต้องการใช้ข้อมูลเดียวกับคอมพิวเตอร์ ให้สำรองข้อมูลจากคอมพิวเตอร์แล้วนำเข้าที่มือถือ (ด้านล่างของหน้านี้)</div>
+      </div>
+
+      <div class="panel" id="photoPanel">
+        <div class="panel-body">
+          <div class="reader">
+            <div class="reader-ico"><svg class="ico lg"><use href="#i-camera"/></svg></div>
+            <div class="t">
+              <b>ถ่ายรูปบัตรประชาชน</b>
+              <span id="photoStatus">อ่านข้อมูลจากรูปบัตรด้านหน้า ประมวลผลในเครื่องนี้ รูปไม่ถูกส่งออกและไม่ถูกบันทึก</span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;">
+            <button class="btn btn-primary" id="photoCamBtn"><svg class="ico"><use href="#i-camera"/></svg>ถ่ายรูปบัตร</button>
+            <button class="btn btn-secondary" id="photoPickBtn"><svg class="ico"><use href="#i-image"/></svg>เลือกรูปจากเครื่อง</button>
+            <input type="file" id="photoCamInput" accept="image/*" capture="environment" hidden>
+            <input type="file" id="photoPickInput" accept="image/*" hidden>
+          </div>
+          <div class="progress" id="photoProgress" hidden><div id="photoBar"></div></div>
+          <ul class="hint photo-tips">
+            <li>วางบัตรบนพื้นสีเข้ม ถ่ายให้บัตรเต็มภาพ ตัวหนังสือคมชัด</li>
+            <li>หลีกเลี่ยงแสงสะท้อนบนบัตร และเงามือ</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="panel" id="readerPanel">
+        <div class="panel-body">
+          <div class="reader">
+            <div class="reader-ico"><svg class="ico lg"><use href="#i-card"/></svg></div>
+            <div class="t">
+              <b id="cardStatus">ยังไม่ได้ตรวจสอบ</b>
+              <span id="cardSub">เสียบบัตรประชาชนเพื่อค้นหาหรือลงทะเบียนผู้ป่วยอัตโนมัติ</span>
+            </div>
+            <button class="btn btn-secondary" id="readCardBtn">อ่านบัตร</button>
+          </div>
+          <label class="switch"><input type="checkbox" id="autoCard" checked> ดึงข้อมูลอัตโนมัติเมื่อเสียบบัตร</label>
+          <div id="cardResult"></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head">
+          <div class="search-wrap" style="flex:1;max-width:420px;">
+            <svg class="ico"><use href="#i-search"/></svg>
+            <input class="input" id="pSearch" type="search" placeholder="ค้นหา ชื่อ / HN / เลขบัตรประชาชน / เบอร์โทร">
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ผู้ป่วย</th><th class="hide-sm">การวินิจฉัย</th><th class="hide-sm">มือที่ฟื้นฟู</th><th>การฝึก</th><th></th></tr></thead>
+            <tbody id="pList"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2><svg class="ico"><use href="#i-file"/></svg>สำรองและนำเข้าข้อมูล</h2></div>
+        <div class="panel-body">
+          <p class="hint" style="margin:0 0 12px;">
+            ข้อมูลผู้ป่วยเก็บในเบราว์เซอร์ของเครื่องนี้เท่านั้น ไม่ได้ส่งขึ้นอินเทอร์เน็ต หากล้างข้อมูลเบราว์เซอร์ข้อมูลจะสูญหาย
+            ควรสำรองเป็นไฟล์เป็นประจำ และเก็บไฟล์ในที่ปลอดภัยตาม พ.ร.บ.คุ้มครองข้อมูลส่วนบุคคล (PDPA)
+          </p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-secondary" id="backupBtn"><svg class="ico"><use href="#i-down"/></svg>สำรองข้อมูล (.json)</button>
+            <button class="btn btn-secondary" id="restoreBtn"><svg class="ico"><use href="#i-up"/></svg>นำเข้าข้อมูล</button>
+            <input type="file" id="restoreFile" accept=".json,application/json" hidden>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =================== หน้า: ประวัติและผลการรักษา =================== -->
+    <section class="page" id="page-stats">
+      <div class="page-head">
+        <div><h1>ประวัติและผลการรักษา</h1><p id="statsSub"></p></div>
+        <button class="btn btn-secondary" id="exportBtn"><svg class="ico"><use href="#i-down"/></svg>ส่งออกรายงาน (CSV)</button>
+      </div>
+
+      <div class="kpis">
+        <div class="kpi"><span>จำนวนครั้งที่ฝึก</span><b id="sSessions">0</b></div>
+        <div class="kpi"><span>รอบรวมทั้งหมด</span><b id="sRounds">0</b></div>
+        <div class="kpi"><span>ระยะกำเฉลี่ย</span><b id="sAvgPeak">–</b></div>
+        <div class="kpi"><span>ฝึกใน 7 วันล่าสุด</span><b><span id="sWeek">0</span> <small>ครั้ง</small></b></div>
+        <div class="kpi"><span id="sGripLabel">แรงบีบล่าสุด</span><b><span id="sGrip">–</span> <small>กก.</small></b></div>
+        <div class="kpi"><span>ฝึกครั้งล่าสุด</span><b id="sLast" style="font-size:18px;">–</b></div>
+      </div>
+
+      <div class="grid grid-2-even">
+        <div>
+          <div class="panel">
+            <div class="panel-head"><h2><svg class="ico"><use href="#i-chart"/></svg>ระยะกำเฉลี่ยในแต่ละครั้ง (%)</h2></div>
+            <div class="panel-body"><div class="chart" id="peakChart"></div></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <h2><svg class="ico"><use href="#i-gauge"/></svg>แรงบีบมือ (กก.)</h2>
+              <button class="btn btn-primary btn-sm" id="addGripBtn"><svg class="ico"><use href="#i-plus"/></svg>บันทึกแรงบีบ</button>
+            </div>
+            <div class="panel-body">
+              <div class="legend" id="gripLegend">
+                <span><i style="background:var(--series-1)"></i>มือซ้าย</span>
+                <span><i style="background:var(--series-2)"></i>มือขวา</span>
+              </div>
+              <div class="chart" id="gripChart"></div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>วันที่</th><th>มือ</th><th>แรง (กก.)</th><th>หมายเหตุ</th><th></th></tr></thead>
+                <tbody id="gripBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <div class="panel">
+            <div class="panel-head">
+              <h2><svg class="ico"><use href="#i-file"/></svg>ประวัติการรักษา</h2>
+              <button class="btn btn-primary btn-sm" id="addTreatBtn"><svg class="ico"><use href="#i-plus"/></svg>เพิ่มบันทึก</button>
+            </div>
+            <div class="panel-body"><div class="timeline" id="treatList"></div></div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head"><h2><svg class="ico"><use href="#i-hand"/></svg>ประวัติการฝึกด้วยถุงมือ</h2></div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>วันเวลา</th><th>รอบ</th><th>กำเฉลี่ย</th><th>ต้าน</th><th>ผล</th><th></th></tr></thead>
+                <tbody id="historyBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<nav class="bottomnav" aria-label="เมนูหลัก">
+  <button class="nav-btn active" data-tab="train"><svg class="ico lg"><use href="#i-hand"/></svg>ฝึก</button>
+  <button class="nav-btn" data-tab="patients"><svg class="ico lg"><use href="#i-users"/></svg>ผู้ป่วย</button>
+  <button class="nav-btn" data-tab="stats"><svg class="ico lg"><use href="#i-chart"/></svg>ผลการรักษา</button>
+</nav>
+
+<!-- ปุ่มหยุดฉุกเฉิน: แสดงตลอดเมื่อเชื่อมต่อถุงมือ ไม่ว่าอยู่หน้าไหน -->
+<div class="estop-bar" id="estopBar">
+  <div class="estop-inner">
+    <div class="hint">หากผู้ป่วยเจ็บหรือพบความผิดปกติ กดหยุดฉุกเฉินทันที (หรือกด <kbd>Space</kbd> / <kbd>Esc</kbd>) · ปุ่ม UP บนบอร์ดใช้หยุดได้เช่นกัน</div>
+    <button class="btn btn-estop" id="estopBtn" disabled><svg class="ico lg"><use href="#i-stop"/></svg>หยุดฉุกเฉิน</button>
+  </div>
+</div>
+
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<!-- =================== Dialogs =================== -->
+<dialog id="patientDlg">
+  <form method="dialog" id="patientForm" novalidate>
+    <div class="dlg-head"><h3 id="patientDlgTitle">ลงทะเบียนผู้ป่วยใหม่</h3><button type="button" class="btn btn-ghost icon-btn" data-close aria-label="ปิด"><svg class="ico"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-body">
+      <div class="ocr-review" id="ocrReview" hidden>
+        <img id="ocrImg" alt="รูปบัตรที่ถ่าย">
+        <div class="alert alert-warn"><svg class="ico"><use href="#i-alert"/></svg>
+          <div><b>ข้อมูลอ่านจากรูปถ่าย อาจคลาดเคลื่อน</b><br>กรุณาตรวจทุกช่องเทียบกับบัตรจริงก่อนบันทึก โดยเฉพาะชื่อ-นามสกุลภาษาไทยและเลขบัตร</div>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-sec">ข้อมูลส่วนบุคคล</div>
+        <div class="f"><label>คำนำหน้า</label>
+          <input name="prefix" list="prefixList" placeholder="นาย / นาง / นางสาว">
+          <datalist id="prefixList"><option>นาย</option><option>นาง</option><option>นางสาว</option><option>เด็กชาย</option><option>เด็กหญิง</option></datalist>
+        </div>
+        <div class="f"><label>HN (เลขประจำตัวผู้ป่วย)</label><input name="hn"></div>
+        <div class="f"><label class="req">ชื่อ</label><input name="firstName" required></div>
+        <div class="f"><label class="req">นามสกุล</label><input name="lastName" required></div>
+        <div class="f full"><label>เลขบัตรประชาชน</label><input name="cid" inputmode="numeric" maxlength="17" placeholder="13 หลัก"><div class="err" id="cidErr"></div></div>
+        <div class="f"><label>วันเกิด</label><input name="dob" type="date"></div>
+        <div class="f"><label>เพศ</label>
+          <select name="gender"><option value="">ไม่ระบุ</option><option value="M">ชาย</option><option value="F">หญิง</option></select>
+        </div>
+        <div class="f"><label>เบอร์โทรศัพท์</label><input name="phone" type="tel"></div>
+        <div class="f"><label>ผู้ติดต่อกรณีฉุกเฉิน</label><input name="emergency" placeholder="ชื่อ / เบอร์โทร"></div>
+        <div class="f full"><label>ที่อยู่</label><textarea name="address"></textarea></div>
+
+        <div class="form-sec" style="margin-top:8px;">ข้อมูลทางคลินิก</div>
+        <div class="f full"><label>การวินิจฉัย</label><input name="diagnosis" placeholder="เช่น โรคหลอดเลือดสมอง (Stroke) อ่อนแรงซีกขวา"></div>
+        <div class="f"><label>มือที่ต้องฟื้นฟู</label>
+          <select name="hand"><option value="">ไม่ระบุ</option><option value="L">มือซ้าย</option><option value="R">มือขวา</option><option value="B">ทั้งสองข้าง</option></select>
+        </div>
+        <div class="f"><label>วันที่เริ่มมีอาการ</label><input name="onset" type="date"></div>
+        <div class="f full"><label>นักกายภาพบำบัดผู้ดูแล</label><input name="therapist"></div>
+        <div class="f full"><label>ข้อควรระวัง / ประวัติแพ้</label><textarea name="notes" placeholder="เช่น ข้อนิ้วบวม, ห้ามกำแรง, แพ้ยา"></textarea></div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn btn-secondary" data-close>ยกเลิก</button>
+      <button type="submit" class="btn btn-primary" value="save"><svg class="ico"><use href="#i-check"/></svg>บันทึกข้อมูล</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="treatDlg">
+  <form method="dialog" id="treatForm" novalidate>
+    <div class="dlg-head"><h3 id="treatDlgTitle">บันทึกการรักษา</h3><button type="button" class="btn btn-ghost icon-btn" data-close aria-label="ปิด"><svg class="ico"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-body">
+      <div class="form-grid">
+        <div class="f"><label class="req">วันที่</label><input name="date" type="date" required></div>
+        <div class="f"><label>ประเภท</label>
+          <select name="type">
+            <option>ตรวจประเมิน</option><option>กายภาพบำบัด</option><option>พบแพทย์</option>
+            <option>ยา</option><option>อาการ / ผลข้างเคียง</option><option>อื่นๆ</option>
+          </select>
+        </div>
+        <div class="f full"><label class="req">หัวข้อ</label><input name="title" required placeholder="เช่น ประเมินกำลังกล้ามเนื้อมือขวา"></div>
+        <div class="f full"><label>รายละเอียด</label><textarea name="detail" rows="4" placeholder="ผลการตรวจ แผนการรักษา คำแนะนำ"></textarea></div>
+        <div class="f full"><label>ผู้บันทึก</label><input name="by"></div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn btn-secondary" data-close>ยกเลิก</button>
+      <button type="submit" class="btn btn-primary" value="save"><svg class="ico"><use href="#i-check"/></svg>บันทึก</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="gripDlg" class="sm">
+  <form method="dialog" id="gripForm" novalidate>
+    <div class="dlg-head"><h3 id="gripDlgTitle">บันทึกแรงบีบมือ</h3><button type="button" class="btn btn-ghost icon-btn" data-close aria-label="ปิด"><svg class="ico"><use href="#i-x"/></svg></button></div>
+    <div class="dlg-body">
+      <div class="form-grid">
+        <div class="f"><label class="req">วันที่วัด</label><input name="date" type="date" required></div>
+        <div class="f"><label class="req">มือ</label>
+          <select name="hand"><option value="L">มือซ้าย</option><option value="R">มือขวา</option></select>
+        </div>
+        <div class="f full"><label class="req">แรงบีบ (กิโลกรัม)</label><input name="kg" type="number" step="0.1" min="0" max="150" inputmode="decimal" required placeholder="เช่น 12.5"></div>
+        <div class="f full"><label>หมายเหตุ</label><input name="note" placeholder="เช่น Hand dynamometer ท่านั่ง ศอกงอ 90°"></div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="btn btn-secondary" data-close>ยกเลิก</button>
+      <button type="submit" class="btn btn-primary" value="save"><svg class="ico"><use href="#i-check"/></svg>บันทึก</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="confirmDlg" class="sm">
+  <form method="dialog">
+    <div class="dlg-body" style="padding-top:22px;">
+      <div class="confirm-ico"><svg class="ico lg"><use href="#i-alert"/></svg></div>
+      <h3 id="confirmTitle" style="margin:0 0 6px;font-size:17px;"></h3>
+      <div id="confirmMsg" style="color:var(--text-2);font-size:14px;white-space:pre-line;"></div>
+    </div>
+    <div class="dlg-foot">
+      <button value="cancel" class="btn btn-secondary">ยกเลิก</button>
+      <button value="ok" class="btn btn-danger" id="confirmOk">ยืนยัน</button>
+    </div>
+  </form>
+</dialog>
+
+<script src="idcard-ocr.js"></script>
+<script>
+(function(){
+  const $ = id => document.getElementById(id);
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+  const todayISO = () => { const d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0,10); };
+  const fmtDate = iso => iso ? new Date(iso.length === 10 ? iso + 'T00:00' : iso).toLocaleDateString('th-TH', {day:'numeric', month:'short', year:'2-digit'}) : '–';
+  const fmtDateTime = iso => new Date(iso).toLocaleString('th-TH', {day:'numeric', month:'short', year:'2-digit', hour:'2-digit', minute:'2-digit'});
+  const icon = id => `<svg class="ico"><use href="#i-${id}"/></svg>`;
+
+  // ---------- แจ้งเตือน / ยืนยัน ----------
+  function toast(msg, type = 'ok'){
+    const el = document.createElement('div');
+    el.className = 'toast ' + type;
+    el.innerHTML = icon(type === 'err' ? 'alert' : 'check') + `<span>${esc(msg)}</span>`;
+    $('toasts').appendChild(el);
+    while($('toasts').childElementCount > 3) $('toasts').firstChild.remove();
+    setTimeout(() => el.remove(), type === 'err' ? 5000 : 2800);
+  }
+  function askConfirm(title, msg, okText = 'ยืนยัน', danger = true){
+    return new Promise(resolve => {
+      const d = $('confirmDlg');
+      $('confirmTitle').textContent = title;
+      $('confirmMsg').textContent = msg;
+      $('confirmOk').textContent = okText;
+      $('confirmOk').className = 'btn ' + (danger ? 'btn-danger' : 'btn-primary');
+      d.querySelector('.confirm-ico').style.cssText = danger ? '' : 'background:var(--primary-50);color:var(--primary)';
+      d.returnValue = '';
+      d.addEventListener('close', () => resolve(d.returnValue === 'ok'), { once: true });
+      d.showModal();
+    });
+  }
+
+  // =========================================================
+  // ฐานข้อมูล (localStorage)
+  // =========================================================
+  const DB_KEY = 'smartGloveDB';
+  const CUR_KEY = 'smartGloveCurrentPatient';
+  let db = loadDB();
+
+  function loadDB(){
+    let d;
+    try{ d = JSON.parse(localStorage.getItem(DB_KEY)); }catch(e){}
+    d = Object.assign({ version: 1, patients: [], treatments: [], grips: [], sessions: [] }, d || {});
+    // ย้ายประวัติการฝึกจากเวอร์ชันก่อน (ยังไม่มีข้อมูลผู้ป่วย)
+    try{
+      const old = JSON.parse(localStorage.getItem('smartGloveHistory'));
+      if(Array.isArray(old) && old.length){
+        old.forEach(s => d.sessions.push(Object.assign({ id: uid(), patientId: null }, s)));
+        localStorage.removeItem('smartGloveHistory');
+        saveDB(d);
+      }
+    }catch(e){}
+    return d;
+  }
+  function saveDB(d = db){
+    try{ localStorage.setItem(DB_KEY, JSON.stringify(d)); }
+    catch(e){ toast('บันทึกข้อมูลไม่สำเร็จ: ' + e.message, 'err'); }
+  }
+
+  let currentId = null;
+  try{ currentId = localStorage.getItem(CUR_KEY); }catch(e){}
+  const getPatient = id => db.patients.find(p => p.id === id) || null;
+  const currentPatient = () => getPatient(currentId);
+  if(currentId && !currentPatient()) currentId = null;
+
+  function selectPatient(id, notify = true){
+    if(running && id !== currentId){ toast('เปลี่ยนผู้ป่วยระหว่างฝึกไม่ได้ กรุณาหยุดการฝึกก่อน', 'err'); return false; }
+    currentId = id;
+    try{ id ? localStorage.setItem(CUR_KEY, id) : localStorage.removeItem(CUR_KEY); }catch(e){}
+    if(notify && id) toast('เลือกผู้ป่วย: ' + fullName(getPatient(id)));
+    renderAll();
+    return true;
+  }
+
+  // ---------- helper ข้อมูลผู้ป่วย ----------
+  const fullName = p => `${p.prefix || ''}${p.firstName} ${p.lastName}`.trim();
+  const cleanCid = s => String(s || '').replace(/\D/g, '');
+  function validCid(cid){
+    if(!/^\d{13}$/.test(cid)) return false;
+    let sum = 0;
+    for(let i = 0; i < 12; i++) sum += +cid[i] * (13 - i);
+    return (11 - sum % 11) % 10 === +cid[12];
+  }
+  const fmtCid = c => c && c.length === 13 ? `${c[0]}-${c.slice(1,5)}-${c.slice(5,10)}-${c.slice(10,12)}-${c[12]}` : (c || '');
+  const maskCid = c => c && c.length === 13 ? `x-xxxx-xxxxx-${c.slice(10,12)}-${c[12]}` : '';
+  function age(dob){
+    if(!dob) return null;
+    const b = new Date(dob + 'T00:00'), n = new Date();
+    let a = n.getFullYear() - b.getFullYear();
+    if(n.getMonth() < b.getMonth() || (n.getMonth() === b.getMonth() && n.getDate() < b.getDate())) a--;
+    return a;
+  }
+  const HAND = { L:'มือซ้าย', R:'มือขวา', B:'ทั้งสองข้าง' };
+  const SEX = { M:'ชาย', F:'หญิง' };
+  const initials = p => (p.firstName || '?').trim().charAt(0);
+
+  // =========================================================
+  // นำทาง
+  // =========================================================
+  function showTab(name){
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === name));
+    document.querySelectorAll('.page').forEach(t => t.classList.toggle('active', t.id === 'page-' + name));
+    window.scrollTo({ top: 0 });
+    if(name === 'stats') renderStats();
+    if(name === 'patients') pollCard();
+  }
+  document.querySelectorAll('.nav-btn').forEach(b => b.addEventListener('click', () => showTab(b.dataset.tab)));
+  $('bnChange').addEventListener('click', () => showTab('patients'));
+  $('step1Btn').addEventListener('click', () => showTab('patients'));
+
+  function renderBanner(){
+    const p = currentPatient();
+    $('banner').classList.toggle('none', !p);
+    $('bnAvatar').textContent = p ? initials(p) : '?';
+    $('bnName').textContent = p ? fullName(p) : 'ยังไม่ได้เลือกผู้ป่วย';
+    if(p){
+      const a = age(p.dob);
+      const kv = [
+        ['HN', p.hn || '–'],
+        ['อายุ', a !== null ? a + ' ปี' : '–'],
+        ['เพศ', SEX[p.gender] || '–'],
+        ['มือที่ฟื้นฟู', HAND[p.hand] || '–'],
+        ['วินิจฉัย', p.diagnosis || '–'],
+      ];
+      $('bnKv').innerHTML = kv.map(([k, v]) => `<span><b>${k}</b>${esc(v)}</span>`).join('');
+      $('bnFlag').innerHTML = p.notes ? `<span class="flag">${icon('alert')}ข้อควรระวัง: ${esc(p.notes)}</span>` : '';
+    } else {
+      $('bnKv').innerHTML = `<span>${IS_MOBILE ? 'เลือกผู้ป่วยจากทะเบียน' : 'เลือกผู้ป่วยจากทะเบียน หรือเสียบบัตรประชาชน'} — ผลการฝึกจะบันทึกเข้าประวัติผู้ป่วยโดยอัตโนมัติ</span>`;
+      $('bnFlag').innerHTML = '';
+    }
+    $('bnChangeText').textContent = p ? 'เปลี่ยนผู้ป่วย' : 'เลือกผู้ป่วย';
+    $('step1').classList.toggle('done', !!p);
+    $('step1Text').textContent = p ? `${fullName(p)}${p.hn ? ' · HN ' + p.hn : ''}` : (IS_MOBILE ? 'เลือกจากทะเบียนผู้ป่วย' : 'เลือกจากทะเบียน หรือเสียบบัตรประชาชน');
+    $('step1Btn').textContent = p ? 'เปลี่ยน' : 'เลือก';
+  }
+
+  // =========================================================
+  // ทะเบียนผู้ป่วย
+  // =========================================================
+  function renderPatientList(){
+    const q = $('pSearch').value.trim().toLowerCase();
+    const qDigits = cleanCid(q);
+    const list = db.patients
+      .filter(p => !q || [fullName(p), p.nameEn, p.hn, p.phone, p.diagnosis].some(v => String(v || '').toLowerCase().includes(q))
+                      || (qDigits.length >= 4 && (p.cid || '').includes(qDigits)))
+      .sort((a, b) => (b.id === currentId) - (a.id === currentId) || fullName(a).localeCompare(fullName(b), 'th'));
+    $('pCount').textContent = db.patients.length;
+    const body = $('pList');
+    body.innerHTML = '';
+    if(!list.length){
+      body.innerHTML = `<tr><td colspan="5" class="empty">${db.patients.length ? 'ไม่พบผู้ป่วยที่ค้นหา' : `ยังไม่มีผู้ป่วยในทะเบียน — กด "ลงทะเบียนผู้ป่วยใหม่"${IS_MOBILE ? '' : ' หรือเสียบบัตรประชาชน'}`}</td></tr>`;
+      return;
+    }
+    list.forEach(p => {
+      const sessions = db.sessions.filter(s => s.patientId === p.id);
+      const last = sessions.reduce((m, s) => s.date > m ? s.date : m, '');
+      const a = age(p.dob);
+      const tr = document.createElement('tr');
+      tr.className = 'click' + (p.id === currentId ? ' sel' : '');
+      tr.innerHTML = `
+        <td>
+          <div class="pname">${esc(fullName(p))}${p.id === currentId ? '<span class="badge primary">กำลังรักษา</span>' : ''}${p.notes ? '<span class="badge bad">ระวัง</span>' : ''}</div>
+          <div class="psub">${[p.hn ? 'HN ' + esc(p.hn) : '', a !== null ? a + ' ปี' : '', SEX[p.gender] || '', p.cid ? maskCid(p.cid) : ''].filter(Boolean).join(' · ') || '–'}</div>
+        </td>
+        <td class="hide-sm">${esc(p.diagnosis || '–')}</td>
+        <td class="hide-sm">${esc(HAND[p.hand] || '–')}</td>
+        <td class="n">${sessions.length} ครั้ง<div class="psub">${last ? 'ล่าสุด ' + esc(fmtDate(last)) : 'ยังไม่เคยฝึก'}</div></td>
+        <td class="act">
+          <button class="btn btn-ghost icon-btn" data-act="edit" title="แก้ไขข้อมูล" aria-label="แก้ไข">${icon('edit')}</button>
+          <button class="btn btn-ghost danger icon-btn" data-act="del" title="ลบผู้ป่วย" aria-label="ลบ">${icon('trash')}</button>
+        </td>`;
+      tr.addEventListener('click', e => {
+        const act = e.target.closest('[data-act]')?.dataset.act;
+        if(act === 'edit') openPatientForm(p);
+        else if(act === 'del') deletePatient(p);
+        else if(p.id !== currentId && selectPatient(p.id)) showTab('train');
+      });
+      body.appendChild(tr);
+    });
+  }
+  $('pSearch').addEventListener('input', renderPatientList);
+
+  let editingPatientId = null;
+  let ocrImgUrl = null;
+  function openPatientForm(p = null, prefill = null, ocr = null){
+    editingPatientId = p ? p.id : null;
+    // แสดงรูปบัตรคู่กับฟอร์ม เพื่อให้ตรวจข้อมูลที่อ่านจากรูป (เก็บในหน่วยความจำเท่านั้น)
+    if(ocrImgUrl){ URL.revokeObjectURL(ocrImgUrl); ocrImgUrl = null; }
+    $('ocrReview').hidden = !ocr;
+    if(ocr){ ocrImgUrl = URL.createObjectURL(ocr.preview || ocr.file); $('ocrImg').src = ocrImgUrl; } else $('ocrImg').removeAttribute('src');
+    $('patientDlgTitle').textContent = p ? 'แก้ไขข้อมูลผู้ป่วย' : 'ลงทะเบียนผู้ป่วยใหม่';
+    const f = $('patientForm');
+    f.reset();
+    $('cidErr').textContent = '';
+    f.elements.cid.removeAttribute('aria-invalid');
+    const data = Object.assign({}, p || {}, prefill || {});
+    Array.from(f.elements).forEach(el => {
+      if(!el.name) return;
+      el.value = el.name === 'cid' ? fmtCid(data.cid) : (data[el.name] ?? '');
+    });
+    if(ocr && data.cid && !validCid(data.cid)){
+      $('cidErr').textContent = 'เลขบัตรที่อ่านจากรูปไม่ผ่านการตรวจสอบ กรุณาแก้ให้ตรงกับบัตร';
+      f.elements.cid.setAttribute('aria-invalid', 'true');
+    }
+    $('patientDlg').showModal();
+  }
+  $('patientDlg').addEventListener('close', () => {
+    if(ocrImgUrl){ URL.revokeObjectURL(ocrImgUrl); ocrImgUrl = null; $('ocrImg').removeAttribute('src'); }
+  });
+  $('addPatientBtn').addEventListener('click', () => openPatientForm());
+
+  $('patientForm').addEventListener('submit', e => {
+    const f = e.target;
+    const v = Object.fromEntries(new FormData(f).entries());
+    Object.keys(v).forEach(k => v[k] = v[k].trim());
+    v.cid = cleanCid(v.cid);
+    const cidErr = msg => { e.preventDefault(); $('cidErr').textContent = msg; f.elements.cid.setAttribute('aria-invalid', 'true'); f.elements.cid.focus(); };
+
+    if(!v.firstName || !v.lastName){
+      e.preventDefault(); toast('กรุณากรอกชื่อและนามสกุล', 'err');
+      (v.firstName ? f.elements.lastName : f.elements.firstName).focus();
+      return;
+    }
+    if(v.cid && !validCid(v.cid)) return cidErr('เลขบัตรประชาชนไม่ถูกต้อง กรุณาตรวจสอบเลข 13 หลัก');
+    const dup = v.cid && db.patients.find(p => p.cid === v.cid && p.id !== editingPatientId);
+    if(dup) return cidErr(`เลขบัตรนี้ลงทะเบียนแล้ว: ${fullName(dup)}`);
+
+    if(editingPatientId){
+      Object.assign(getPatient(editingPatientId), v, { updatedAt: new Date().toISOString() });
+      saveDB(); toast('บันทึกการแก้ไขแล้ว'); renderAll();
+    } else {
+      const p = Object.assign({ id: uid(), createdAt: new Date().toISOString() }, v);
+      db.patients.push(p);
+      saveDB();
+      toast('ลงทะเบียนผู้ป่วยแล้ว');
+      if(!running) selectPatient(p.id, false); else renderAll();
+    }
+  });
+
+  async function deletePatient(p){
+    if(running && p.id === currentId){ toast('ลบผู้ป่วยที่กำลังฝึกอยู่ไม่ได้', 'err'); return; }
+    const n = db.sessions.filter(s => s.patientId === p.id).length
+            + db.treatments.filter(t => t.patientId === p.id).length
+            + db.grips.filter(g => g.patientId === p.id).length;
+    const ok = await askConfirm('ลบผู้ป่วยออกจากทะเบียน?',
+      `${fullName(p)}\nข้อมูลที่เกี่ยวข้อง ${n} รายการ (ประวัติการฝึก การรักษา แรงบีบ) จะถูกลบด้วย\nไม่สามารถกู้คืนได้ ยกเว้นมีไฟล์สำรอง`, 'ลบผู้ป่วย');
+    if(!ok) return;
+    db.patients = db.patients.filter(x => x.id !== p.id);
+    db.sessions = db.sessions.filter(x => x.patientId !== p.id);
+    db.treatments = db.treatments.filter(x => x.patientId !== p.id);
+    db.grips = db.grips.filter(x => x.patientId !== p.id);
+    saveDB();
+    toast('ลบผู้ป่วยแล้ว');
+    if(currentId === p.id) selectPatient(null, false); else renderAll();
+  }
+
+  document.querySelectorAll('dialog [data-close]').forEach(b => b.addEventListener('click', () => b.closest('dialog').close()));
+
+  // =========================================================
+  // เครื่องอ่านบัตรประชาชน (ผ่าน thai_id_bridge.py)
+  // =========================================================
+  // เปิดจากโปรแกรม RehabGlove บนเครื่อง = ใช้ที่อยู่เดียวกัน, เปิดจากเว็บโฮสต์ = เรียกโปรแกรมบนเครื่องนี้
+  const SERVED_BY_BRIDGE = ['127.0.0.1', 'localhost'].includes(location.hostname) && location.port === '8765';
+  const BRIDGE_URL = SERVED_BY_BRIDGE ? '/card' : 'http://127.0.0.1:8765/card';
+  // มือถือเสียบเครื่องอ่านบัตร USB ไม่ได้ จึงไม่ต้องค้นหาโปรแกรมอ่านบัตร
+  const IS_MOBILE = navigator.userAgentData?.mobile ?? /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+  let lastCardSeq = null, cardTimer = null, cardBusy = false, bridgeDownUntil = 0;
+
+  async function fetchCard(force = false){
+    const res = await fetch(BRIDGE_URL + (force ? '?force=1' : ''), { cache: 'no-store' });
+    if(!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  }
+
+  function setCardStatus(text, sub, level){
+    $('cardStatus').textContent = text;
+    $('cardSub').textContent = sub;
+    $('chipCard').className = 'chip' + (level ? ' ' + level : '');
+    $('chipCardText').textContent = level === 'ok' ? 'เครื่องอ่านบัตร: พร้อม' : level === 'warn' ? 'เครื่องอ่านบัตร: ตรวจสอบ' : 'เครื่องอ่านบัตร: ปิดอยู่';
+  }
+
+  async function pollCard(force = false){
+    if(cardBusy || IS_MOBILE) return;
+    cardBusy = true;
+    try{
+      const s = await fetchCard(force);
+      if(!s.reader){
+        setCardStatus('ไม่พบเครื่องอ่านบัตร', s.error || 'เสียบเครื่องอ่านบัตรเข้ากับคอมพิวเตอร์', 'warn');
+      } else if(!s.present){
+        setCardStatus('พร้อมอ่านบัตร', 'เสียบบัตรประชาชนเข้าเครื่องอ่าน · ' + s.reader, 'ok');
+        $('cardResult').innerHTML = '';
+        lastCardSeq = s.seq;
+      } else if(s.error){
+        setCardStatus('อ่านบัตรไม่สำเร็จ', s.error + ' — ลองดึงบัตรออกแล้วเสียบใหม่', 'warn');
+      } else if(s.data){
+        setCardStatus('อ่านบัตรเรียบร้อย', s.reader, 'ok');
+        if(force || s.seq !== lastCardSeq){
+          // ข้ามบัตรที่เสียบค้างไว้ตั้งแต่ก่อนเปิดหน้า เว้นแต่กดอ่านเอง
+          if(force || lastCardSeq !== null) onCardData(s.data);
+          lastCardSeq = s.seq;
+        }
+      }
+      bridgeDownUntil = 0;
+    }catch(e){
+      setCardStatus('ยังไม่ได้เปิดโปรแกรมอ่านบัตร', 'เปิดไฟล์ start_card_bridge.bat ในเครื่องนี้ก่อนใช้งาน', '');
+      bridgeDownUntil = Date.now() + 8000; // ถามห่างลงเมื่อโปรแกรมไม่ได้เปิด
+    }finally{
+      cardBusy = false;
+    }
+  }
+
+  function onCardData(c){
+    const cid = cleanCid(c.cid);
+    const existing = db.patients.find(p => p.cid === cid);
+    const fromCard = {
+      cid, prefix: c.prefix, firstName: c.firstName, lastName: c.lastName,
+      nameEn: c.nameEn, dob: c.dob, gender: c.gender, address: c.address,
+    };
+    if(existing){
+      if(!selectPatient(existing.id, false)) return;
+      // ถ้าข้อมูลบนบัตรต่างจากที่บันทึกไว้ (เปลี่ยนชื่อ/ย้ายที่อยู่) เสนอให้อัปเดต
+      const diff = ['prefix','firstName','lastName','dob','address'].filter(k => fromCard[k] && fromCard[k] !== existing[k]);
+      $('cardResult').innerHTML = `<div class="alert alert-info" style="margin-top:12px;">${icon('check')}<div>พบในทะเบียน: <b>${esc(fullName(existing))}</b> — เลือกเป็นผู้ป่วยที่กำลังรักษาแล้ว
+        ${diff.length ? `<br>ข้อมูลบนบัตรต่างจากในทะเบียน ${diff.length} รายการ <button class="btn btn-ghost btn-sm" id="cardUpdateBtn">อัปเดตจากบัตร</button>` : ''}</div></div>`;
+      if(diff.length) $('cardUpdateBtn').addEventListener('click', () => openPatientForm(existing, fromCard));
+      toast('พบผู้ป่วยในทะเบียน: ' + fullName(existing));
+    } else {
+      $('cardResult').innerHTML = `<div class="alert alert-info" style="margin-top:12px;">${icon('plus')}<div>ผู้ป่วยใหม่: <b>${esc((c.prefix || '') + c.firstName + ' ' + c.lastName)}</b> — กรอกข้อมูลทางคลินิกแล้วกดบันทึก</div></div>`;
+      openPatientForm(null, fromCard);
+    }
+  }
+
+  $('readCardBtn').addEventListener('click', () => { setCardStatus('กำลังอ่านบัตร...', 'กรุณาอย่าดึงบัตรออก', 'ok'); pollCard(true); });
+  function startCardPolling(){
+    clearInterval(cardTimer);
+    if(IS_MOBILE) return;
+    if($('autoCard').checked) cardTimer = setInterval(() => {
+      if(document.visibilityState === 'visible' && !$('patientDlg').open && Date.now() > bridgeDownUntil) pollCard();
+    }, 1500);
+  }
+  $('autoCard').addEventListener('change', startCardPolling);
+
+  // =========================================================
+  // ถ่ายรูปบัตรประชาชน (OCR บนเครื่อง)
+  // =========================================================
+  let photoBusy = false;
+  function setPhotoProgress(text, pct){
+    $('photoStatus').textContent = text;
+    $('photoProgress').hidden = pct === null;
+    if(pct !== null) $('photoBar').style.width = Math.round(pct * 100) + '%';
+  }
+  const PHOTO_IDLE = 'อ่านข้อมูลจากรูปบัตรด้านหน้า ประมวลผลในเครื่องนี้ รูปไม่ถูกส่งออกและไม่ถูกบันทึก';
+
+  async function onCardPhoto(file){
+    if(!file || photoBusy) return;
+    photoBusy = true;
+    $('photoCamBtn').disabled = $('photoPickBtn').disabled = true;
+    try{
+      setPhotoProgress('กำลังเตรียมตัวอ่านภาพ (ครั้งแรกอาจใช้เวลาสักครู่)...', 0.02);
+      const r = await ThaiIdOcr.readCard(file, ({ stage, progress }) => {
+        if(stage === 'ocr') setPhotoProgress('กำลังอ่านข้อมูลจากรูป...', 0.1 + progress * 0.9);
+        else setPhotoProgress('กำลังเตรียมตัวอ่านภาพ (ครั้งแรกอาจใช้เวลาสักครู่)...', Math.min(0.1, 0.02 + progress * 0.08));
+      });
+      setPhotoProgress(PHOTO_IDLE, null);
+      if(!r || (!r.cid && !r.firstName && !r.nameEn)){
+        toast('อ่านข้อมูลจากรูปไม่ได้ ลองถ่ายใหม่ให้บัตรเต็มภาพและไม่มีแสงสะท้อน', 'err');
+        return;
+      }
+      const fromPhoto = {
+        cid: r.cid, prefix: r.prefix, firstName: r.firstName, lastName: r.lastName,
+        nameEn: r.nameEn, dob: r.dob, gender: r.gender, address: r.address,
+      };
+      // เลขบัตรผ่าน checksum และมีในทะเบียน: ถามก่อนเลือก (กันเลือกผิดคน)
+      const existing = r.cidValid && db.patients.find(p => p.cid === r.cid);
+      if(existing){
+        const pick = await askConfirm('พบผู้ป่วยในทะเบียน',
+          `เลขบัตรตรงกับ ${fullName(existing)}${existing.hn ? ' (HN ' + existing.hn + ')' : ''}\nเลือกผู้ป่วยรายนี้เพื่อเข้ารับการฝึกหรือไม่?`, 'เลือกผู้ป่วยนี้', false);
+        if(pick && selectPatient(existing.id)) showTab('train');
+        return;
+      }
+      openPatientForm(null, fromPhoto, { file, preview: await uprightPreview(file, r.rotation) });
+    }catch(err){
+      setPhotoProgress(PHOTO_IDLE, null);
+      toast('อ่านรูปบัตรไม่สำเร็จ: ' + err.message, 'err');
+    }finally{
+      photoBusy = false;
+      $('photoCamBtn').disabled = $('photoPickBtn').disabled = false;
+    }
+  }
+  // รูปตัวอย่างหมุนให้ตั้งตรงตามที่ OCR ตรวจพบ ย่อขนาดไว้แสดงในฟอร์มเท่านั้น
+  async function uprightPreview(file, rotation){
+    try{
+      const img = await createImageBitmap(file, { imageOrientation: 'from-image' });
+      const k = Math.min(1, 1000 / Math.max(img.width, img.height));
+      const w = img.width * k, h = img.height * k, swap = rotation % 180 !== 0;
+      const c = document.createElement('canvas');
+      c.width = swap ? h : w; c.height = swap ? w : h;
+      const ctx = c.getContext('2d');
+      ctx.translate(c.width / 2, c.height / 2);
+      ctx.rotate(rotation * Math.PI / 180);
+      ctx.drawImage(img, -w / 2, -h / 2, w, h);
+      img.close();
+      return await new Promise(res => c.toBlob(res, 'image/jpeg', 0.85));
+    }catch(e){ return null; }
+  }
+  $('photoCamBtn').addEventListener('click', () => $('photoCamInput').click());
+  $('photoPickBtn').addEventListener('click', () => $('photoPickInput').click());
+  ['photoCamInput', 'photoPickInput'].forEach(id => $(id).addEventListener('change', e => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    onCardPhoto(file);
+  }));
+
+  // =========================================================
+  // สำรอง / นำเข้าข้อมูล
+  // =========================================================
+  function download(name, text, type){
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type }));
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }
+  $('backupBtn').addEventListener('click', () => {
+    download(`rehabglove-backup-${todayISO()}.json`, JSON.stringify(db, null, 1), 'application/json');
+    toast('ดาวน์โหลดไฟล์สำรองแล้ว');
+  });
+  $('restoreBtn').addEventListener('click', () => $('restoreFile').click());
+  $('restoreFile').addEventListener('change', async e => {
+    const file = e.target.files[0];
+    e.target.value = '';
+    if(!file) return;
+    try{
+      const d = JSON.parse(await file.text());
+      if(!Array.isArray(d.patients) || !Array.isArray(d.sessions)) throw new Error('รูปแบบไฟล์ไม่ถูกต้อง');
+      const ok = await askConfirm('นำเข้าข้อมูลจากไฟล์สำรอง?',
+        `ไฟล์มีผู้ป่วย ${d.patients.length} ราย และประวัติการฝึก ${d.sessions.length} ครั้ง\nข้อมูลจะรวมกับข้อมูลเดิม รายการที่ซ้ำกันจะใช้ข้อมูลจากไฟล์`, 'นำเข้า');
+      if(!ok) return;
+      ['patients','treatments','grips','sessions'].forEach(k => {
+        const incoming = d[k] || [];
+        const ids = new Set(incoming.map(x => x.id));
+        db[k] = db[k].filter(x => !ids.has(x.id)).concat(incoming);
+      });
+      saveDB();
+      renderAll();
+      toast('นำเข้าข้อมูลเรียบร้อย');
+    }catch(err){ toast('นำเข้าไม่สำเร็จ: ' + err.message, 'err'); }
+  });
+
+  // =========================================================
+  // ประวัติการรักษา
+  // =========================================================
+  function requirePatient(){
+    if(currentPatient()) return true;
+    toast('กรุณาเลือกผู้ป่วยก่อน', 'err');
+    showTab('patients');
+    return false;
+  }
+
+  let editingTreatId = null;
+  function openTreatForm(t = null){
+    if(!requirePatient()) return;
+    editingTreatId = t ? t.id : null;
+    $('treatDlgTitle').textContent = t ? 'แก้ไขบันทึกการรักษา' : 'บันทึกการรักษา';
+    const f = $('treatForm');
+    f.reset();
+    f.elements.date.value = t ? t.date : todayISO();
+    if(t){ f.elements.type.value = t.type; f.elements.title.value = t.title; f.elements.detail.value = t.detail; f.elements.by.value = t.by; }
+    else f.elements.by.value = currentPatient().therapist || '';
+    $('treatDlg').showModal();
+  }
+  $('addTreatBtn').addEventListener('click', () => openTreatForm());
+  $('treatForm').addEventListener('submit', e => {
+    const v = Object.fromEntries(new FormData(e.target).entries());
+    if(!v.date || !v.title.trim()){ e.preventDefault(); toast('กรุณากรอกวันที่และหัวข้อ', 'err'); return; }
+    if(editingTreatId) Object.assign(db.treatments.find(t => t.id === editingTreatId), v);
+    else db.treatments.push(Object.assign({ id: uid(), patientId: currentId, createdAt: new Date().toISOString() }, v));
+    saveDB();
+    toast('บันทึกการรักษาแล้ว');
+    renderStats();
+  });
+
+  function renderTreatments(){
+    const box = $('treatList');
+    const p = currentPatient();
+    $('addTreatBtn').disabled = !p;
+    if(!p){ box.innerHTML = '<div class="empty">เลือกผู้ป่วยเพื่อดูประวัติการรักษา</div>'; return; }
+    const list = db.treatments.filter(t => t.patientId === p.id).sort((a, b) => b.date.localeCompare(a.date));
+    let html = '';
+    if(p.diagnosis || p.onset || p.notes){
+      html += `<div class="dx"><b>การวินิจฉัย:</b> ${esc(p.diagnosis || '–')}${p.onset ? ` · เริ่มมีอาการ ${esc(fmtDate(p.onset))}` : ''}${p.notes ? `<br><b>ข้อควรระวัง:</b> ${esc(p.notes)}` : ''}</div>`;
+    }
+    if(!list.length) html += '<div class="empty">ยังไม่มีบันทึกการรักษา</div>';
+    list.forEach(t => {
+      html += `<div class="tl" data-id="${esc(t.id)}">
+        <div class="d">${esc(fmtDate(t.date))}</div>
+        <div>
+          <div class="title">${esc(t.title)}<span class="badge">${esc(t.type)}</span></div>
+          ${t.detail ? `<div class="body">${esc(t.detail)}</div>` : ''}
+          <div class="foot"><span>${t.by ? 'ผู้บันทึก: ' + esc(t.by) : ''}</span>
+            <span><button class="btn btn-ghost icon-btn" data-act="edit" title="แก้ไข" aria-label="แก้ไข">${icon('edit')}</button><button class="btn btn-ghost danger icon-btn" data-act="del" title="ลบ" aria-label="ลบ">${icon('trash')}</button></span></div>
+        </div>
+      </div>`;
+    });
+    box.innerHTML = html;
+    box.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', async () => {
+      const t = db.treatments.find(x => x.id === b.closest('.tl').dataset.id);
+      if(b.dataset.act === 'edit') return openTreatForm(t);
+      if(await askConfirm('ลบบันทึกการรักษา?', `${fmtDate(t.date)} — ${t.title}`, 'ลบ')){
+        db.treatments = db.treatments.filter(x => x.id !== t.id);
+        saveDB(); toast('ลบบันทึกแล้ว'); renderStats();
+      }
+    }));
+  }
+
+  // =========================================================
+  // แรงบีบมือ (กรอกเอง)
+  // =========================================================
+  let editingGripId = null;
+  function openGripForm(g = null){
+    if(!requirePatient()) return;
+    const p = currentPatient();
+    editingGripId = g ? g.id : null;
+    $('gripDlgTitle').textContent = g ? 'แก้ไขแรงบีบมือ' : 'บันทึกแรงบีบมือ';
+    const f = $('gripForm');
+    f.reset();
+    f.elements.date.value = g ? g.date : todayISO();
+    f.elements.hand.value = g ? g.hand : (p.hand === 'L' ? 'L' : 'R');
+    f.elements.kg.value = g ? g.kg : '';
+    f.elements.note.value = g ? g.note : '';
+    $('gripDlg').showModal();
+  }
+  $('addGripBtn').addEventListener('click', () => openGripForm());
+  $('gripForm').addEventListener('submit', e => {
+    const v = Object.fromEntries(new FormData(e.target).entries());
+    const kg = parseFloat(v.kg);
+    if(!v.date || !(kg >= 0 && kg <= 150)){ e.preventDefault(); toast('กรุณากรอกวันที่ และแรงบีบระหว่าง 0–150 กก.', 'err'); return; }
+    v.kg = Math.round(kg * 10) / 10;
+    if(editingGripId) Object.assign(db.grips.find(g => g.id === editingGripId), v);
+    else db.grips.push(Object.assign({ id: uid(), patientId: currentId, createdAt: new Date().toISOString() }, v));
+    saveDB();
+    toast('บันทึกแรงบีบแล้ว');
+    renderStats();
+  });
+
+  function renderGrips(){
+    const p = currentPatient();
+    $('addGripBtn').disabled = !p;
+    const list = p ? db.grips.filter(g => g.patientId === p.id).sort((a, b) => b.date.localeCompare(a.date) || (b.createdAt||"").localeCompare(a.createdAt||"")) : [];
+    const body = $('gripBody');
+    body.innerHTML = list.length ? '' : `<tr><td colspan="5" class="empty">${p ? 'ยังไม่มีบันทึกแรงบีบ' : 'เลือกผู้ป่วยเพื่อบันทึกแรงบีบ'}</td></tr>`;
+    list.forEach(g => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="n">${esc(fmtDate(g.date))}</td><td>${g.hand === 'L' ? 'ซ้าย' : 'ขวา'}</td><td class="n"><b>${esc(g.kg.toFixed(1))}</b></td>
+        <td>${esc(g.note)}</td><td class="act"><button class="btn btn-ghost icon-btn" data-act="edit" title="แก้ไข" aria-label="แก้ไข">${icon('edit')}</button><button class="btn btn-ghost danger icon-btn" data-act="del" title="ลบ" aria-label="ลบ">${icon('trash')}</button></td>`;
+      tr.querySelector('[data-act=edit]').addEventListener('click', () => openGripForm(g));
+      tr.querySelector('[data-act=del]').addEventListener('click', async () => {
+        if(!await askConfirm('ลบบันทึกแรงบีบ?', `${fmtDate(g.date)} · ${g.hand === 'L' ? 'มือซ้าย' : 'มือขวา'} · ${g.kg} กก.`, 'ลบ')) return;
+        db.grips = db.grips.filter(x => x.id !== g.id);
+        saveDB(); toast('ลบบันทึกแล้ว'); renderStats();
+      });
+      body.appendChild(tr);
+    });
+
+    const asc = list.slice().reverse();
+    const series = [
+      { name: 'มือซ้าย', color: 'var(--series-1)', points: asc.filter(g => g.hand === 'L').map(g => ({ x: g.date, y: g.kg })) },
+      { name: 'มือขวา', color: 'var(--series-2)', points: asc.filter(g => g.hand === 'R').map(g => ({ x: g.date, y: g.kg })) },
+    ].filter(s => s.points.length);
+    $('gripLegend').style.display = series.length >= 2 ? '' : 'none';
+    lineChart($('gripChart'), series, { unit: ' กก.', emptyText: p ? 'บันทึกแรงบีบเพื่อดูกราฟพัฒนาการ' : '' });
+  }
+
+  // =========================================================
+  // สถิติ
+  // =========================================================
+  function patientSessions(){
+    return db.sessions.filter(s => s.patientId === (currentId || null)).sort((a, b) => a.date.localeCompare(b.date));
+  }
+
+  function renderStats(){
+    const p = currentPatient();
+    $('statsSub').textContent = p ? `${fullName(p)}${p.hn ? ' · HN ' + p.hn : ''}` : 'ยังไม่ได้เลือกผู้ป่วย — แสดงผลการฝึกที่ไม่ระบุผู้ป่วย';
+    const ss = patientSessions();
+    const rounds = ss.reduce((a, s) => a + s.rounds, 0);
+    const weighted = rounds ? Math.round(ss.reduce((a, s) => a + s.avgPeak * s.rounds, 0) / rounds) : null;
+    const weekAgo = Date.now() - 7 * 864e5;
+    $('sSessions').textContent = ss.length;
+    $('sRounds').textContent = rounds;
+    $('sAvgPeak').textContent = weighted === null ? '–' : weighted + '%';
+    $('sWeek').textContent = ss.filter(s => new Date(s.date).getTime() >= weekAgo).length;
+    $('sLast').textContent = ss.length ? fmtDate(ss[ss.length - 1].date) : '–';
+    const grips = p ? db.grips.filter(g => g.patientId === p.id).sort((a, b) => a.date.localeCompare(b.date) || (a.createdAt||"").localeCompare(b.createdAt||"")) : [];
+    // แรงบีบล่าสุดของมือที่ต้องฟื้นฟู (ถ้าระบุไว้)
+    const handGrips = p && (p.hand === 'L' || p.hand === 'R') ? grips.filter(g => g.hand === p.hand) : [];
+    const lastGrip = (handGrips.length ? handGrips : grips).slice(-1)[0];
+    $('sGrip').textContent = lastGrip ? lastGrip.kg.toFixed(1) : '–';
+    $('sGripLabel').textContent = lastGrip ? `แรงบีบล่าสุด (${lastGrip.hand === 'L' ? 'ซ้าย' : 'ขวา'})` : 'แรงบีบล่าสุด';
+
+    lineChart($('peakChart'),
+      ss.length ? [{ name: 'กำเฉลี่ย', color: 'var(--series-1)', points: ss.map(s => ({ x: s.date, y: s.avgPeak, extra: `${s.rounds}/${s.target} รอบ` })) }] : [],
+      { unit: '%', yMax: 100, emptyText: 'ยังไม่มีข้อมูลการฝึก' });
+
+    renderGrips();
+    renderTreatments();
+    renderHistory();
+  }
+
+  const RESULT_BADGE = { 'ครบ':'ok', 'หยุดเอง':'', 'สัญญาณหลุด':'warn', 'หยุดฉุกเฉิน':'bad', 'ข้อผิดพลาด':'bad' };
+  function renderHistory(){
+    const tbody = $('historyBody');
+    const ss = patientSessions().slice().reverse();
+    tbody.innerHTML = ss.length ? '' : '<tr><td colspan="6" class="empty">ยังไม่มีประวัติการฝึก</td></tr>';
+    ss.slice(0, 50).forEach(r => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td class="n">${esc(fmtDateTime(r.date))}</td><td class="n">${r.rounds}/${r.target}</td><td class="n"><b>${r.avgPeak}%</b></td>
+        <td class="n">${r.stalls}</td><td><span class="badge ${RESULT_BADGE[r.result] ?? ''}" style="margin:0">${esc(r.result)}</span></td>
+        <td class="act"><button class="btn btn-ghost danger icon-btn" title="ลบ" aria-label="ลบ">${icon('trash')}</button></td>`;
+      tr.querySelector('button').addEventListener('click', async () => {
+        if(!await askConfirm('ลบผลการฝึก?', `${fmtDateTime(r.date)} · ${r.rounds} รอบ · กำเฉลี่ย ${r.avgPeak}%`, 'ลบ')) return;
+        db.sessions = db.sessions.filter(x => x.id !== r.id);
+        saveDB(); toast('ลบผลการฝึกแล้ว'); renderStats(); renderPatientList();
+      });
+      tbody.appendChild(tr);
+    });
+  }
+
+  $('exportBtn').addEventListener('click', () => {
+    const p = currentPatient();
+    const rows = [['patient','hn','date','rounds','target','speed','hold_ms','avg_peak_pct','stalls','result','peaks']];
+    patientSessions().forEach(r => rows.push([p ? fullName(p) : 'ไม่ระบุ', p?.hn || '', r.date, r.rounds, r.target, r.speed, r.holdMs, r.avgPeak, r.stalls, r.result, (r.peaks || []).join(' ')]));
+    if(p){
+      rows.push([], ['grip_date','hand','kg','note']);
+      db.grips.filter(g => g.patientId === p.id).forEach(g => rows.push([g.date, g.hand, g.kg, g.note]));
+    }
+    const csv = '﻿' + rows.map(r => r.map(c => `"${String(c ?? '').replace(/"/g, '""')}"`).join(',')).join('\n');
+    download(`rehabglove-${p ? (p.hn || p.firstName) : 'unassigned'}-${todayISO()}.csv`, csv, 'text/csv');
+  });
+
+  // ---------------------------------------------------------
+  // กราฟเส้น (SVG) — แกน y เดียว, เส้น 2px, จุด 8px, hover/แตะเพื่อดูค่า
+  // ---------------------------------------------------------
+  function lineChart(el, series, { unit = '', yMax = null, emptyText = '' } = {}){
+    el.innerHTML = '';
+    if(!series.length){ if(emptyText) el.innerHTML = `<div class="empty">${esc(emptyText)}</div>`; return; }
+    const W = 460, H = 200, L = 34, R = 60, T = 12, B = 26;
+    const all = series.flatMap(s => s.points);
+    const t = d => new Date(d.length === 10 ? d + 'T00:00' : d).getTime();
+    let x0 = Math.min(...all.map(p => t(p.x))), x1 = Math.max(...all.map(p => t(p.x)));
+    if(x0 === x1){ x0 -= 864e5; x1 += 864e5; }
+    let top = yMax ?? Math.max(...all.map(p => p.y));
+    if(yMax === null){ const step = top <= 10 ? 2 : top <= 50 ? 10 : 20; top = Math.ceil((top * 1.1 || 1) / step) * step; }
+    const sx = v => L + (t(v) - x0) / (x1 - x0) * (W - L - R);
+    const sy = v => T + (1 - v / top) * (H - T - B);
+    const NS = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(NS, 'svg');
+    svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    svg.setAttribute('role', 'img');
+    const mk = (tag, attrs, parent = svg) => { const n = document.createElementNS(NS, tag); for(const k in attrs) n.setAttribute(k, attrs[k]); parent.appendChild(n); return n; };
+
+    for(let i = 0; i <= 4; i++){
+      const v = top * i / 4, y = sy(v);
+      mk('line', { x1: L, x2: W - R, y1: y, y2: y, class: 'grid' });
+      mk('text', { x: L - 6, y: y + 3.5, 'text-anchor': 'end', class: 'axis-label' }).textContent = Math.round(v * 10) / 10;
+    }
+    const firstX = all.reduce((m, p) => t(p.x) < t(m) ? p.x : m, all[0].x);
+    const lastX = all.reduce((m, p) => t(p.x) > t(m) ? p.x : m, all[0].x);
+    mk('text', { x: L, y: H - 6, class: 'axis-label' }).textContent = fmtDate(firstX);
+    if(firstX !== lastX) mk('text', { x: W - R, y: H - 6, 'text-anchor': 'end', class: 'axis-label' }).textContent = fmtDate(lastX);
+
+    const tip = document.createElement('div');
+    tip.className = 'tooltip';
+    el.appendChild(tip);
+
+    series.forEach(s => {
+      if(s.points.length > 1){
+        mk('polyline', { points: s.points.map(p => `${sx(p.x)},${sy(p.y)}`).join(' '), fill: 'none',
+          stroke: s.color, 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round' });
+      }
+      s.points.forEach(p => {
+        const cx = sx(p.x), cy = sy(p.y);
+        mk('circle', { cx, cy, r: 4, fill: s.color, stroke: 'var(--surface)', 'stroke-width': 2 });
+        const hit = mk('circle', { cx, cy, r: 12, class: 'hit' });
+        const show = () => {
+          tip.innerHTML = `<b>${esc(p.y)}${esc(unit)}</b> ${series.length > 1 ? esc(s.name) : ''}<br>${esc(fmtDate(p.x))}${p.extra ? ' · ' + esc(p.extra) : ''}`;
+          const k = svg.getBoundingClientRect().width / W;
+          tip.style.left = cx * k + 'px';
+          tip.style.top = cy * k + 'px';
+          tip.style.display = 'block';
+        };
+        hit.addEventListener('mouseenter', show);
+        hit.addEventListener('click', show);
+        hit.addEventListener('mouseleave', () => tip.style.display = 'none');
+      });
+      const last = s.points[s.points.length - 1];
+      mk('text', { x: sx(last.x) + 8, y: sy(last.y) + 4, class: 'direct-label' }).textContent =
+        `${last.y}${unit}` + (series.length > 1 ? ` ${s.name.replace('มือ', '')}` : '');
+    });
+    el.appendChild(svg);
+  }
+
+  // =========================================================
+  // ส่วนควบคุมถุงมือ (BLE)
+  // =========================================================
+  const SERVICE_UUID = '6e400001-b5a3-f393-e0a9-e50e24dcca9e';
+  const RX_UUID      = '6e400002-b5a3-f393-e0a9-e50e24dcca9e';
+  const TX_UUID      = '6e400003-b5a3-f393-e0a9-e50e24dcca9e';
+
+  let device=null, rxChar=null, userDisconnect=false;
+
+  const RING_C = 2*Math.PI*86;
+  $('ring').setAttribute('stroke-dasharray', RING_C);
+  $('ring').setAttribute('stroke-dashoffset', RING_C);
+
+  let targetRounds = 12, speed = 50, holdMs = 2000;
+  let running = false, paused = false;
+  let session = null;      // {start, patientId, peaks:[], stalls:[], pendingStall}
+
+  function log(msg, dir){
+    const el = document.createElement('div');
+    const time = new Date().toLocaleTimeString('th-TH',{hour12:false});
+    el.textContent = `[${time}] ${dir||''} ${msg}`;
+    const holder = $('logHolder');
+    holder.prepend(el);
+    while(holder.childElementCount > 200) holder.lastChild.remove();
+  }
+
+  function setConnState(state){ // 'off' | 'on' | 'reconnecting'
+    const on = state === 'on';
+    $('chipGlove').className = 'chip' + (on ? ' ok' : state === 'reconnecting' ? ' warn' : '');
+    $('chipGloveText').textContent = on ? 'ถุงมือ: เชื่อมต่อแล้ว' : state === 'reconnecting' ? 'ถุงมือ: กำลังเชื่อมต่อใหม่' : 'ถุงมือ: ไม่เชื่อมต่อ';
+    $('step2').classList.toggle('done', on);
+    $('statusSub').textContent = on ? `เชื่อมต่อกับ ${device?.name || 'SmartGlove'} แล้ว`
+      : state === 'reconnecting' ? 'สัญญาณหลุด ระบบคืนมือสู่ท่าแบมือแล้ว กำลังเชื่อมต่อใหม่...' : 'กดเชื่อมต่อแล้วเลือก "SmartGlove"';
+    $('connectText').textContent = on || state === 'reconnecting' ? 'ตัดการเชื่อมต่อ' : 'เชื่อมต่อ';
+    $('connectBtn').className = 'btn btn-sm ' + (on ? 'btn-secondary' : 'btn-primary');
+    $('estopBar').classList.toggle('show', on);
+    $('estopBtn').disabled = !on;
+    if(!on) $('chipBatt').style.display = 'none';
+    updateButtons();
+  }
+
+  function updateButtons(){
+    const on = !!(device && device.gatt.connected);
+    $('startBtn').disabled = !on || (running && !paused);
+    $('pauseBtn').disabled = !on || !running;
+    $('stopBtn').disabled  = !on;   // หยุดได้เสมอ (หลังหยุดฉุกเฉิน ใช้คืนมือสู่ท่าแบมือ)
+    $('pauseText').textContent = paused ? 'ฝึกต่อ' : 'พัก';
+    $('pauseBtn').querySelector('use').setAttribute('href', paused ? '#i-play' : '#i-pause');
+    document.querySelectorAll('.cal').forEach(b => b.disabled = !on || running);
+  }
+
+  function setRing(pct){
+    const p = Math.max(0, Math.min(100, pct));
+    $('ring').setAttribute('stroke-dashoffset', RING_C * (1 - p/100));
+    $('ringPct').textContent = `กำ ${Math.round(p)}%`;
+  }
+
+  const PHASES = {
+    GRIP:    ['กำมือ',    '#0B66B2'],
+    HOLD:    ['กำค้าง',   '#09548F'],
+    RELEASE: ['แบมือ',    '#1E8E5A'],
+    TWIST:   ['คลายเอ็น', '#1E8E5A'],
+  };
+  function setPhaseBadge(text, cls = ''){
+    $('phaseBadge').textContent = text;
+    $('phaseBadge').className = 'badge ' + cls;
+  }
+
+  function showAlert(text){
+    $('alertText').textContent = text;
+    $('alertBox').classList.toggle('show', !!text);
+  }
+
+  const ERR_TEXT = {
+    STALL:      'กลไกติดขัดระหว่างคืนสาย มอเตอร์หยุดแล้ว กรุณาตรวจสอบสายและถุงมือ',
+    DIRECTION:  'encoder นับกลับทิศกับมอเตอร์ ให้แก้ค่า ENC_SIGN ในโค้ด Arduino เป็น -1',
+    OVERTRAVEL: 'มอเตอร์หมุนเกินระยะกำที่ตั้งไว้ ระบบตัดการทำงานแล้ว กรุณาคาลิเบรตใหม่',
+    TIMEOUT:    'จังหวะการเคลื่อนไหวใช้เวลานานผิดปกติ มอเตอร์หยุดแล้ว',
+    BUSY:       'ไม่สามารถทำคำสั่งนี้ระหว่างฝึกได้',
+    ROM_TOO_SMALL: 'ระยะกำน้อยเกินไป กด "กำเพิ่ม" อีกก่อนตั้งเป็นกำสุด',
+  };
+
+  async function connect(){
+    try{
+      log('กำลังค้นหาอุปกรณ์...', '→');
+      device = await navigator.bluetooth.requestDevice({ filters: [{ services: [SERVICE_UUID] }] });
+      device.addEventListener('gattserverdisconnected', onDisconnected);
+      userDisconnect = false;
+      log(`พบอุปกรณ์: ${device.name}`, '✓');
+      await setupGatt();
+      toast('เชื่อมต่อถุงมือแล้ว');
+    }catch(err){
+      log('เชื่อมต่อไม่สำเร็จ: ' + err.message, '✕');
+      if(err.name !== 'NotFoundError') toast('เชื่อมต่อถุงมือไม่สำเร็จ: ' + err.message, 'err');
+    }
+  }
+
+  async function setupGatt(){
+    const server = await device.gatt.connect();
+    const service = await server.getPrimaryService(SERVICE_UUID);
+    rxChar = await service.getCharacteristic(RX_UUID);
+    const txChar = await service.getCharacteristic(TX_UUID);
+    await txChar.startNotifications();
+    txChar.addEventListener('characteristicvaluechanged', onStatusReceived);
+    setConnState('on');
+    log('เชื่อมต่อสำเร็จ พร้อมใช้งาน', '✓');
+    sendCommand('SYNC');
+  }
+
+  async function onDisconnected(){
+    rxChar = null;
+    log('อุปกรณ์ตัดการเชื่อมต่อ', '✕');
+    if(running){ running = false; paused = false; finishSession('สัญญาณหลุด'); }
+    if(userDisconnect){ setConnState('off'); return; }
+
+    setConnState('reconnecting');
+    toast('สัญญาณถุงมือหลุด กำลังเชื่อมต่อใหม่', 'err');
+    for(let i=1; i<=5 && !userDisconnect; i++){
+      await new Promise(r => setTimeout(r, 1000 * i));
+      if(userDisconnect) break;
+      try{
+        log(`เชื่อมต่อใหม่ ครั้งที่ ${i}`, '→');
+        await setupGatt();
+        toast('เชื่อมต่อถุงมือกลับมาแล้ว');
+        return;
+      }catch(e){ /* ลองใหม่ */ }
+    }
+    setConnState('off');
+  }
+
+  $('connectBtn').addEventListener('click', ()=>{
+    if(device && (device.gatt.connected || $('chipGlove').classList.contains('warn'))){
+      userDisconnect = true;
+      if(device.gatt.connected) device.gatt.disconnect(); else setConnState('off');
+    } else connect();
+  });
+
+  let writeQueue = Promise.resolve();
+  function sendCommand(cmd){
+    if(!rxChar){ log('ยังไม่ได้เชื่อมต่อ ส่งคำสั่งไม่ได้', '✕'); return Promise.resolve(); }
+    const ch = rxChar;
+    writeQueue = writeQueue.then(async ()=>{
+      try{
+        await ch.writeValue(new TextEncoder().encode(cmd));
+        if(!cmd.startsWith('JOG')) log(cmd, '↑ ส่ง');
+      }catch(err){
+        log(`ส่ง ${cmd} ไม่สำเร็จ: ${err.message}`, '✕');
+      }
+    });
+    return writeQueue;
+  }
+
+  // ESTOP แซงคิว เพื่อให้ถึงบอร์ดเร็วที่สุด
+  async function sendEstop(){
+    if(!rxChar) return;
+    try{ await rxChar.writeValueWithoutResponse(new TextEncoder().encode('ESTOP')); }
+    catch(e){ try{ await rxChar.writeValue(new TextEncoder().encode('ESTOP')); }catch(e2){ log('ส่ง ESTOP ไม่สำเร็จ: '+e2.message,'✕'); } }
+    log('ESTOP', '↑ ส่ง');
+  }
+
+  function onStatusReceived(event){
+    const msg = new TextDecoder('utf-8').decode(event.target.value).trim();
+    if(!msg.startsWith('POS:')) log(msg, '↓ รับ');
+    handleStatus(msg);
+  }
+
+  function handleStatus(msg){
+    const [key, val=''] = msg.split(/:(.*)/s);
+    switch(key){
+      case 'POS': setRing(parseInt(val,10)); break;
+      case 'PHASE': {
+        const [label, color] = PHASES[val] || [val, '#0B66B2'];
+        $('ringPhaseText').textContent = label;
+        $('ring').setAttribute('stroke', color);
+        $('ringSub').textContent = 'กำลังทำงาน';
+        setPhaseBadge('กำลังฝึก', 'primary');
+        break;
+      }
+      case 'STARTED':
+        running = true; paused = false;
+        $('roundNow').textContent = '0';
+        $('ringSub').textContent = 'เริ่มฝึกแล้ว';
+        showAlert('');
+        startSession();
+        requestWakeLock();
+        break;
+      case 'ROUND': $('roundNow').textContent = val; break;
+      case 'PEAK':
+        if(session){
+          session.peaks.push(parseInt(val,10));
+          session.stalls.push(session.pendingStall);
+          session.pendingStall = false;
+          renderSession();
+        }
+        break;
+      case 'STALL':
+        if(session) session.pendingStall = true;
+        $('ringSub').textContent = `นิ้วเกร็งต้านที่ ${val}% — กำค้างไว้`;
+        break;
+      case 'DONE':
+        running = false; paused = false;
+        $('ringPhaseText').textContent = 'เสร็จสิ้น';
+        $('ringSub').textContent = 'ฝึกครบตามเป้าหมาย';
+        setPhaseBadge('ฝึกครบ', 'ok');
+        setRing(0);
+        finishSession('ครบ');
+        toast('ฝึกครบตามเป้าหมาย บันทึกผลแล้ว');
+        break;
+      case 'PAUSED':  paused = true;  $('ringSub').textContent = 'กำลังคืนมือสู่ท่าแบมือ'; setPhaseBadge('พัก', 'warn'); break;
+      case 'RESUMED': paused = false; $('ringSub').textContent = 'กำลังทำงาน'; break;
+      case 'RETURNING': $('ringPhaseText').textContent = 'คืนท่า'; break;
+      case 'RETURNED':
+        setRing(0);
+        $('ringPhaseText').textContent = paused ? 'พัก' : 'พร้อม';
+        $('ringSub').textContent = paused ? 'หยุดชั่วคราว' : '–';
+        break;
+      case 'STOPPED':
+        if(running) finishSession('หยุดเอง');
+        running = false; paused = false;
+        $('ringPhaseText').textContent = 'พร้อม';
+        $('ringSub').textContent = 'หยุดการฝึกแล้ว';
+        setPhaseBadge('พร้อม');
+        break;
+      case 'ESTOP':
+        if(running) finishSession('หยุดฉุกเฉิน');
+        running = false; paused = false;
+        $('ringPhaseText').textContent = 'หยุดฉุกเฉิน';
+        $('ringSub').textContent = 'กด "หยุด" เพื่อคืนมือสู่ท่าแบมือ';
+        setPhaseBadge('หยุดฉุกเฉิน', 'bad');
+        showAlert('หยุดฉุกเฉินแล้ว มอเตอร์ถูกเบรกค้างไว้ ตรวจสอบผู้ป่วย แล้วกดปุ่ม "หยุด" เพื่อคืนสายสู่ท่าแบมือ');
+        break;
+      case 'ERR':
+        if(['STALL','DIRECTION','OVERTRAVEL','TIMEOUT'].includes(val)){
+          if(running) finishSession('ข้อผิดพลาด');
+          running = false; paused = false;
+          $('ringPhaseText').textContent = 'หยุด';
+          setPhaseBadge('ผิดปกติ', 'bad');
+        }
+        showAlert(ERR_TEXT[val] || val);
+        break;
+      case 'BATT': {
+        const v = parseFloat(val);
+        $('chipBatt').style.display = '';
+        $('battText').textContent = `${v.toFixed(1)} V`;
+        $('chipBatt').className = 'chip ' + (v < 7.0 ? 'bad' : 'ok'); // แบต 2 เซลล์ ต่ำกว่า ~7.0V ควรชาร์จ
+        break;
+      }
+      case 'CFG': {
+        const [rom, tgt, spd, hold] = val.split(',').map(Number);
+        $('romVal').textContent = rom;
+        setSlider('tgtSlider', tgt); setSlider('spdSlider', spd); setSlider('holdSlider', hold);
+        matchPreset();
+        break;
+      }
+      case 'STATE': {
+        const [ph, round, p] = val.split(',');
+        running = ph !== 'IDLE' && ph !== 'JOG';
+        paused = p === '1';
+        $('roundNow').textContent = round;
+        if(PHASES[ph]) handleStatus('PHASE:' + ph);
+        break;
+      }
+    }
+    updateButtons();
+  }
+
+  $('startBtn').addEventListener('click', async ()=>{
+    if(!currentPatient() && !await askConfirm('ยังไม่ได้เลือกผู้ป่วย', 'ผลการฝึกจะถูกบันทึกเป็น "ไม่ระบุผู้ป่วย"\nต้องการเริ่มฝึกต่อหรือไม่?', 'เริ่มฝึก')) return;
+    await sendCommand(`TGT:${targetRounds}`);
+    await sendCommand(`SPD:${speed}`);
+    await sendCommand(`HOLD:${holdMs}`);
+    await sendCommand('START');
+  });
+  $('pauseBtn').addEventListener('click', ()=> sendCommand(paused ? 'RESUME' : 'PAUSE'));
+  $('stopBtn').addEventListener('click', ()=> sendCommand('STOP'));
+  $('estopBtn').addEventListener('click', sendEstop);
+  // Space หรือ Esc = หยุดฉุกเฉิน (ยกเว้นขณะพิมพ์ หรือมีหน้าต่างฟอร์มเปิดอยู่)
+  document.addEventListener('keydown', e => {
+    const typing = ['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName) || document.querySelector('dialog[open]');
+    if((e.key === 'Escape' || e.code === 'Space') && rxChar && !typing){
+      e.preventDefault(); sendEstop();
+    }
+  });
+
+  $('jogPlus').addEventListener('click', ()=> sendCommand('JOG:+'));
+  $('jogMinus').addEventListener('click', ()=> sendCommand('JOG:-'));
+  $('zeroBtn').addEventListener('click', ()=> sendCommand('ZERO'));
+  $('setMaxBtn').addEventListener('click', ()=> sendCommand('SETMAX'));
+
+  // ---------- ระดับการฝึก + แถบเลื่อน ----------
+  const sliderFmt = {
+    tgtSlider:  v => { targetRounds = v; $('tgtVal').textContent = v + ' รอบ'; $('roundTarget').textContent = v; },
+    spdSlider:  v => { speed = v; $('spdVal').textContent = v + '%'; },
+    holdSlider: v => { holdMs = v; $('holdVal').textContent = (v/1000).toFixed(1) + ' วินาที'; },
+  };
+  const sliderCmd = { tgtSlider:'TGT', spdSlider:'SPD', holdSlider:'HOLD' };
+  const sendTimers = {};
+
+  function setSlider(id, v){
+    if(Number.isNaN(v)) return;
+    $(id).value = v;
+    sliderFmt[id](v);
+  }
+
+  const PRESETS = {
+    easy:   { tgt: 8,  spd: 30, hold: 3000, desc: 'สำหรับผู้ป่วยระยะแรก หรือมีอาการเกร็ง/ปวด — เคลื่อนช้า กำค้างนาน' },
+    mid:    { tgt: 12, spd: 50, hold: 2000, desc: 'สำหรับการฝึกทั่วไป' },
+    hard:   { tgt: 20, spd: 70, hold: 1500, desc: 'สำหรับผู้ป่วยที่ฟื้นตัวดีแล้ว — จำนวนรอบมากขึ้น เคลื่อนเร็วขึ้น' },
+    custom: { desc: 'ปรับค่าเองด้วยแถบเลื่อนด้านล่าง' },
+  };
+  let preset = 'mid';
+  function applyPreset(name, send = true){
+    preset = name;
+    document.querySelectorAll('#presetSeg button').forEach(b => {
+      b.classList.toggle('active', b.dataset.preset === name);
+      b.setAttribute('aria-checked', b.dataset.preset === name);
+    });
+    const p = PRESETS[name];
+    $('presetDesc').textContent = p.desc;
+    if(name === 'custom') return;
+    setSlider('tgtSlider', p.tgt); setSlider('spdSlider', p.spd); setSlider('holdSlider', p.hold);
+    if(send && rxChar){ sendCommand(`TGT:${p.tgt}`); sendCommand(`SPD:${p.spd}`); sendCommand(`HOLD:${p.hold}`); }
+  }
+  // ค่าที่บอร์ดส่งมาตรงกับระดับไหน ให้เลือกระดับนั้นไว้
+  function matchPreset(){
+    const hit = Object.keys(PRESETS).find(k => k !== 'custom' && PRESETS[k].tgt === targetRounds && PRESETS[k].spd === speed && PRESETS[k].hold === holdMs);
+    applyPreset(hit || 'custom', false);
+  }
+  document.querySelectorAll('#presetSeg button').forEach(b => b.addEventListener('click', () => applyPreset(b.dataset.preset)));
+
+  Object.keys(sliderFmt).forEach(id=>{
+    $(id).addEventListener('input', e => {
+      const v = parseInt(e.target.value, 10);
+      sliderFmt[id](v);
+      if(preset !== 'custom') applyPreset('custom', false);
+      clearTimeout(sendTimers[id]);
+      sendTimers[id] = setTimeout(()=> sendCommand(`${sliderCmd[id]}:${v}`), 300);
+    });
+  });
+
+  // ---------- บันทึกผลการฝึกเข้าผู้ป่วย ----------
+  function startSession(){
+    session = { start: new Date(), patientId: currentId || null, peaks: [], stalls: [], pendingStall: false };
+    renderSession();
+  }
+
+  function renderSession(){
+    const s = session || { peaks: [], stalls: [] };
+    const n = s.peaks.length;
+    $('statRounds').textContent = n;
+    $('statPeak').textContent = n ? Math.round(s.peaks.reduce((a,b)=>a+b,0)/n) + '%' : '–';
+    $('statStall').textContent = s.stalls.filter(Boolean).length;
+    $('bars').innerHTML = '';
+    s.peaks.forEach((p,i)=>{
+      const d = document.createElement('div');
+      d.style.height = Math.max(2, p) + '%';
+      d.title = `รอบ ${i+1}: ${p}%${s.stalls[i] ? ' (มีแรงต้าน)' : ''}`;
+      if(s.stalls[i]) d.className = 'stall';
+      $('bars').appendChild(d);
+    });
+  }
+
+  function finishSession(result){
+    releaseWakeLock();
+    if(!session || !session.peaks.length){ session = null; return; }
+    const n = session.peaks.length;
+    db.sessions.push({
+      id: uid(),
+      patientId: session.patientId,
+      date: session.start.toISOString(),
+      rounds: n, target: targetRounds, speed, holdMs,
+      avgPeak: Math.round(session.peaks.reduce((a,b)=>a+b,0)/n),
+      stalls: session.stalls.filter(Boolean).length,
+      peaks: session.peaks, result,
+    });
+    saveDB();
+    session = null;
+    renderStats();
+    renderPatientList();
+  }
+
+  // ---------- Wake Lock (กันจอดับระหว่างฝึก) ----------
+  let wakeLock = null;
+  async function requestWakeLock(){
+    try{ if('wakeLock' in navigator) wakeLock = await navigator.wakeLock.request('screen'); }catch(e){}
+  }
+  function releaseWakeLock(){ if(wakeLock){ wakeLock.release().catch(()=>{}); wakeLock = null; } }
+  document.addEventListener('visibilitychange', ()=>{
+    if(document.visibilityState === 'visible' && running && !paused) requestWakeLock();
+  });
+
+  // =========================================================
+  // เริ่มต้น
+  // =========================================================
+  function renderAll(){
+    renderBanner();
+    renderPatientList();
+    renderStats();
+  }
+
+  // คอมพิวเตอร์: ใช้เครื่องอ่านบัตรเป็นหลัก ถ่ายรูปเป็นทางเลือกรอง
+  if(!IS_MOBILE) $('readerPanel').after($('photoPanel'));
+  if(IS_MOBILE){
+    $('readerPanel').style.display = 'none';
+    $('chipCard').style.display = 'none';
+    $('mobileCardNote').style.display = '';
+  }
+
+  // ---------- ติดตั้งเป็นแอป (PWA) ----------
+  if('serviceWorker' in navigator && (location.protocol === 'https:' || ['127.0.0.1','localhost'].includes(location.hostname))){
+    navigator.serviceWorker.register('sw.js').catch(err => log('ลงทะเบียน service worker ไม่สำเร็จ: ' + err.message, '✕'));
+  }
+  let installPrompt = null;
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    installPrompt = e;
+    $('installBtn').hidden = false;
+  });
+  $('installBtn').addEventListener('click', async () => {
+    if(!installPrompt) return;
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if(outcome === 'accepted') $('installBtn').hidden = true;
+    installPrompt = null;
+  });
+  window.addEventListener('appinstalled', () => { $('installBtn').hidden = true; toast('ติดตั้งแอปเรียบร้อย'); });
+
+  applyPreset('mid', false);
+  renderAll();
+  renderSession();
+  setConnState('off');
+  startCardPolling();
+  pollCard();
+  if(!navigator.bluetooth){
+    log('เบราว์เซอร์นี้ไม่รองรับ Web Bluetooth API', '✕');
+    $('connectBtn').disabled = true;
+  } else {
+    $('browserWarn').style.display = 'none';
+  }
+})();
+</script>
+</body>
+</html>
