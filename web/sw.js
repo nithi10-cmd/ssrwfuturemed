@@ -1,6 +1,6 @@
 // Service worker: เก็บไฟล์แอปไว้ในเครื่อง ให้เปิดได้แม้ไม่มีอินเทอร์เน็ต
 // เมื่อแก้ไฟล์แอป ให้เพิ่มเลขเวอร์ชันนี้ เพื่อให้เครื่องผู้ใช้โหลดไฟล์ใหม่
-const VERSION = 'rehabglove-v2';
+const VERSION = 'rehabglove-v5';
 const APP_FILES = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const APP_FILES = [
   './icons/icon-maskable-512.png',
   './icons/apple-touch-icon.png',
   './icons/favicon-32.png',
+  './icons/school-logo.png',
 ];
 
 self.addEventListener('install', e => {

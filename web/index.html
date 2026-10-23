@@ -22,6 +22,7 @@
     --bg:#F4F7FA; --surface:#FFFFFF; --line:#DCE3EA; --line-2:#EDF1F5;
     --text:#14212E; --text-2:#4A5A6A; --muted:#738396;
     --series-1:#0B66B2; --series-2:#D9622B;
+    --gold:#F2C000;
     --radius:12px; --shadow:0 1px 2px rgba(16,40,64,.06), 0 1px 1px rgba(16,40,64,.04);
     --font:'Sarabun',-apple-system,'Segoe UI','Leelawadee UI','Tahoma',sans-serif;
     --mono:ui-monospace,'SF Mono',Consolas,monospace;
@@ -37,7 +38,12 @@
   /* ---------- โครงหน้า ---------- */
   .topbar{position:sticky;top:0;z-index:20;height:56px;background:var(--surface);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;padding:0 16px;}
   .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px;color:var(--text);white-space:nowrap;}
-  .brand-mark{width:30px;height:30px;border-radius:8px;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;}
+  .brand-mark{width:32px;height:32px;border-radius:8px;flex-shrink:0;}
+  .school-logo{height:40px;width:auto;flex-shrink:0;margin-top:-3px;}
+  .brand-divider{width:1px;height:30px;background:var(--line);flex-shrink:0;}
+  /* แถบสีทอง-น้ำเงิน ใต้หัวแอป: สีทองจากรัศมีในตราโรงเรียน */
+  .topbar::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:3px;
+    background:linear-gradient(90deg,var(--gold) 0,var(--gold) 120px,var(--primary) 120px);}
   .brand small{display:block;font-weight:500;font-size:11.5px;color:var(--muted);line-height:1.1;}
   .chips{margin-left:auto;display:flex;gap:8px;align-items:center;}
   .chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;color:var(--text-2);background:var(--line-2);border-radius:999px;padding:4px 10px;white-space:nowrap;}
@@ -284,7 +290,9 @@
     .page-head h1{font-size:20px;}
     .banner{flex-wrap:wrap;}
     .banner #bnChange{width:100%;}
-    .brand{font-size:15px;}
+    .brand{font-size:15px;gap:8px;}
+    .school-logo{height:36px;}
+    .brand-mark{width:28px;height:28px;}
   }
 </style>
 </head>
@@ -321,8 +329,10 @@
 
 <header class="topbar">
   <div class="brand">
-    <div class="brand-mark"><svg class="ico"><use href="#i-cross"/></svg></div>
-    <div>RehabGlove Clinic<small>ระบบฟื้นฟูมือด้วยถุงมือกายภาพบำบัด</small></div>
+    <img class="school-logo" src="data:image/png;base64,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" alt="ตราโรงเรียนศรีสองรักษ์วิทยา">
+    <span class="brand-divider"></span>
+    <img class="brand-mark" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAFAAAABQCAMAAAC5zwKfAAABIFBMVEUKZbL9/v4AAAAAXbX7xQAzdZeLmFMAXMJsi2r+2zoAVaoLaLc8gsDWtRqOpXEtd6xqoc+tpTjpvAtFfYpRhY8JabYKarrw1EEbcLdXg3pqk4MDa7jTxVBEicPErib/4zIhbqQKabsLZ7cMbcAAf3/lzElmnc6ew+Cus2LMsiIAAH8AAP8AVf8KcLcAf9R7lm2EnnecoUePuNugoEO7ulyryeTBu1s6g758klxcl8uhrmkAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADBneM5AAAAYHRSTlP+/wD/////////A8j///////////8wef////8R//////9Gif8C//////8CAQMZBv///////////////wAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAD+1PDjAAAD0ElEQVR42u2Z2VbjOBCGa6zFVoIkvBBjx2SDMKR7aHa6Z97/waYkOXHoBtkhOnMxp+sCB8X+/Kv0V9lHgaiNURRNl6sxHBzj1XJqL3cB7nCFuMknaC1zMrWIDjiKriZwVEyuWpEW+Fd0Nr48Dng5PkNMCxxFZxAgzqxGCMZriRB9CcUzxC8RfB19G4cCjr+NvsIomlyGAl5OohFEt75T2KChLm4xh14DJoOG9uwYwdSbwR+/6GE/vFmcwtL3fZwkcd/I21jCypvmPP15JM29F6ygxzNyO+dFO2PZ45w+J0juZlgUbsZcHucs8uQApK6Ju8ETOY6YUDtncn9vQYwmR5qfUW5IRP1jD5yywy7vPhbaHbPMKnx+Jt1/ALoYVjqsm5BW7jijlTk0jflb0ZkbVbpLildz9bBbjhtlNXFqrbheWxNSbr9TN7uleajAXxqStedqUeAnktAMJeiyRE0so4kZK0QrkDDpLxwk3tGctBJLWyvULCwTgpklp7ZOylYgyeld3LcuMd86I5+/glWFeSuEKEw+jVp4nedbT/F4gJc5fXKfXucmjZJSFtdC1DGjVJoE2hthPDlL9UdKN0YIpkpgfaQUdaj5XKF2XCCCbJNcYBuaDrVjSrPKXNOIkhnMDGqlapwxolkpjINIlQ3nAWyo8QeKKdeLnO+Mxni+WJdGNrqJbg6omIWk9v5r0SCN7AKZjVjbOVC5GADS0GYZ15ZKFt/bcvn++KeNx++2SO5jhvfLWt0EtA+o7rRD5hSRrgjO/9jFuSsnxDlDAtF3Sns1qvKmsDIrI9EOnXTAC9fDpLsXgeKmVH0uZM28UcwUYdYmaQ944uQvMlNwTOGpbIATlZiXz/XuKfIO0HxVP5dzoYa1/bwRQpQF+RhIihJPaXKPvJi8FWnN8SHQGOqtPBK/7aucJ7l7eGwV1OQd4MXu+no7A7dMuSHsd1pWPUiayZQnFTPj9n6tm3UH1DuDu1MYqxKeyozKh+qnxo2SGcdixcjkLOVoM31q4/qxAz5euzG0Xs7TGZJMzLA44/fSicwklfYc7Mx7wn4NjZ3chkxxpv6mWHBsDZSRUx/wlGBzpBteDLINTh77Xg8QUpzo4LcI8yS67gHCge8k/UD43wFPQwP/9gGvP/OW+PIx7+Vz74bnNuBivzm0Y0e9Fev32tcxsd8PITSQ/AZ+KnToRekc/gKB4uTCxkkoHpC9h93v+A9iHBq3Cgtc+bdZDo9lz0bQwTOe9mxVHbxzGvVsph0at1H47b7gG5LBt0zDb+qG33YOvzEefus+/I8LAX/++Bfoszw38BuQnwAAAABJRU5ErkJggg==" alt="">
+    <div>RehabGlove Clinic<small>โรงเรียนศรีสองรักษ์วิทยา · ระบบฟื้นฟูมือด้วยถุงมือกายภาพบำบัด</small></div>
   </div>
   <div class="chips">
     <span class="chip" id="chipGlove" title="สถานะถุงมือ"><span class="dot"></span><svg class="ico" style="width:14px;height:14px"><use href="#i-bt"/></svg><span class="lbl" id="chipGloveText">ถุงมือ: ไม่เชื่อมต่อ</span></span>
@@ -337,7 +347,10 @@
     <button class="nav-btn active" data-tab="train"><svg class="ico lg"><use href="#i-hand"/></svg>ฝึกกายภาพ</button>
     <button class="nav-btn" data-tab="patients"><svg class="ico lg"><use href="#i-users"/></svg>ทะเบียนผู้ป่วย</button>
     <button class="nav-btn" data-tab="stats"><svg class="ico lg"><use href="#i-chart"/></svg>ประวัติและผลการรักษา</button>
-    <div class="nav-foot">ข้อมูลเก็บในเครื่องนี้เท่านั้น<br>สำรองข้อมูลเป็นประจำที่หน้า "ทะเบียนผู้ป่วย"</div>
+    <div class="nav-foot">
+      โครงงานถุงมือกายภาพบำบัด<br>โรงเรียนศรีสองรักษ์วิทยา<br><br>
+      ข้อมูลเก็บในเครื่องนี้เท่านั้น<br>สำรองข้อมูลเป็นประจำที่หน้า "ทะเบียนผู้ป่วย"
+    </div>
   </nav>
 
   <main>
@@ -830,12 +843,45 @@
   if(currentId && !currentPatient()) currentId = null;
 
   function selectPatient(id, notify = true){
-    if(running && id !== currentId){ toast('เปลี่ยนผู้ป่วยระหว่างฝึกไม่ได้ กรุณาหยุดการฝึกก่อน', 'err'); return false; }
+    const changed = id !== currentId;
+    if(running && changed){ toast('เปลี่ยนผู้ป่วยระหว่างฝึกไม่ได้ กรุณาหยุดการฝึกก่อน', 'err'); return false; }
+    // หลังหยุดฉุกเฉิน สายอาจยังตึงค้าง ต้องคืนสายก่อนให้ผู้ป่วยคนถัดไปสวมถุงมือ
+    if(needsReturn && changed && rxChar){
+      toast('ถุงมือยังค้างจากการหยุดฉุกเฉิน กด "หยุด" เพื่อคืนสายสู่ท่าแบมือก่อนเปลี่ยนผู้ป่วย', 'err');
+      showTab('train');
+      return false;
+    }
     currentId = id;
     try{ id ? localStorage.setItem(CUR_KEY, id) : localStorage.removeItem(CUR_KEY); }catch(e){}
     if(notify && id) toast('เลือกผู้ป่วย: ' + fullName(getPatient(id)));
+    if(changed){
+      resetTrainingView();
+      loadPatientSettings();
+    }
     renderAll();
     return true;
+  }
+
+  // ล้างหน้าติดตามการฝึกและผลการฝึกของผู้ป่วยคนก่อน
+  function resetTrainingView(){
+    session = null;
+    renderSession();
+    setRing(0);
+    $('roundNow').textContent = '0';
+    $('ringPhaseText').textContent = 'พร้อม';
+    $('ringSub').textContent = '–';
+    setPhaseBadge('พร้อม');
+    showAlert('');
+  }
+
+  // ใช้ระดับการฝึกล่าสุดของผู้ป่วยรายนี้ (ถ้าเคยฝึก) ไม่เช่นนั้นใช้ "ปานกลาง"
+  function loadPatientSettings(){
+    const t = currentPatient()?.training;
+    if(!t){ applyPreset('mid'); return; }
+    if(t.preset && t.preset !== 'custom'){ applyPreset(t.preset); return; }
+    setSlider('tgtSlider', t.tgt); setSlider('spdSlider', t.spd); setSlider('holdSlider', t.hold);
+    applyPreset('custom', false);
+    if(rxChar){ sendCommand(`TGT:${t.tgt}`); sendCommand(`SPD:${t.spd}`); sendCommand(`HOLD:${t.hold}`); }
   }
 
   // ---------- helper ข้อมูลผู้ป่วย ----------
@@ -1480,6 +1526,7 @@
 
   let targetRounds = 12, speed = 50, holdMs = 2000;
   let running = false, paused = false;
+  let needsReturn = false;  // หยุดฉุกเฉิน/ผิดพลาดแล้ว ยังไม่ได้คืนสายสู่ท่าแบมือ
   let session = null;      // {start, patientId, peaks:[], stalls:[], pendingStall}
 
   function log(msg, dir){
@@ -1644,7 +1691,12 @@
         break;
       }
       case 'STARTED':
-        running = true; paused = false;
+        running = true; paused = false; needsReturn = false;
+        // จำระดับการฝึกไว้กับผู้ป่วย ครั้งหน้าเลือกผู้ป่วยแล้วใช้ค่าเดิมได้ทันที
+        if(currentPatient()){
+          currentPatient().training = { preset, tgt: targetRounds, spd: speed, hold: holdMs };
+          saveDB();
+        }
         $('roundNow').textContent = '0';
         $('ringSub').textContent = 'เริ่มฝึกแล้ว';
         showAlert('');
@@ -1677,6 +1729,7 @@
       case 'RESUMED': paused = false; $('ringSub').textContent = 'กำลังทำงาน'; break;
       case 'RETURNING': $('ringPhaseText').textContent = 'คืนท่า'; break;
       case 'RETURNED':
+        if(needsReturn){ needsReturn = false; showAlert(''); setPhaseBadge('พร้อม'); }
         setRing(0);
         $('ringPhaseText').textContent = paused ? 'พัก' : 'พร้อม';
         $('ringSub').textContent = paused ? 'หยุดชั่วคราว' : '–';
@@ -1690,7 +1743,7 @@
         break;
       case 'ESTOP':
         if(running) finishSession('หยุดฉุกเฉิน');
-        running = false; paused = false;
+        running = false; paused = false; needsReturn = true;
         $('ringPhaseText').textContent = 'หยุดฉุกเฉิน';
         $('ringSub').textContent = 'กด "หยุด" เพื่อคืนมือสู่ท่าแบมือ';
         setPhaseBadge('หยุดฉุกเฉิน', 'bad');
@@ -1699,7 +1752,7 @@
       case 'ERR':
         if(['STALL','DIRECTION','OVERTRAVEL','TIMEOUT'].includes(val)){
           if(running) finishSession('ข้อผิดพลาด');
-          running = false; paused = false;
+          running = false; paused = false; needsReturn = true;
           $('ringPhaseText').textContent = 'หยุด';
           setPhaseBadge('ผิดปกติ', 'bad');
         }
@@ -1713,10 +1766,8 @@
         break;
       }
       case 'CFG': {
-        const [rom, tgt, spd, hold] = val.split(',').map(Number);
-        $('romVal').textContent = rom;
-        setSlider('tgtSlider', tgt); setSlider('spdSlider', spd); setSlider('holdSlider', hold);
-        matchPreset();
+        // ใช้เฉพาะค่าคาลิเบรต ส่วนระดับการฝึกยึดตามหน้าจอ (ของผู้ป่วยที่เลือก) ซึ่งส่งให้บอร์ดตอนกดเริ่มฝึก
+        $('romVal').textContent = val.split(',')[0];
         break;
       }
       case 'STATE': {
@@ -1788,11 +1839,7 @@
     setSlider('tgtSlider', p.tgt); setSlider('spdSlider', p.spd); setSlider('holdSlider', p.hold);
     if(send && rxChar){ sendCommand(`TGT:${p.tgt}`); sendCommand(`SPD:${p.spd}`); sendCommand(`HOLD:${p.hold}`); }
   }
-  // ค่าที่บอร์ดส่งมาตรงกับระดับไหน ให้เลือกระดับนั้นไว้
-  function matchPreset(){
-    const hit = Object.keys(PRESETS).find(k => k !== 'custom' && PRESETS[k].tgt === targetRounds && PRESETS[k].spd === speed && PRESETS[k].hold === holdMs);
-    applyPreset(hit || 'custom', false);
-  }
+
   document.querySelectorAll('#presetSeg button').forEach(b => b.addEventListener('click', () => applyPreset(b.dataset.preset)));
 
   Object.keys(sliderFmt).forEach(id=>{
@@ -1892,7 +1939,7 @@
   });
   window.addEventListener('appinstalled', () => { $('installBtn').hidden = true; toast('ติดตั้งแอปเรียบร้อย'); });
 
-  applyPreset('mid', false);
+  loadPatientSettings();
   renderAll();
   renderSession();
   setConnState('off');
